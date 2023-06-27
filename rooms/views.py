@@ -40,7 +40,6 @@ class CreateRoom(CreateView):
 
 def room_update(request, room_pk, croupier_pk):
     room = get_object_or_404(Room, id=room_pk)
-
     if request.method == 'POST':
         form = RoomCreationForm(request.POST, request.FILES, instance=room)
         if form.is_valid():

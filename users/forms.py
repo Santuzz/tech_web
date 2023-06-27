@@ -1,8 +1,9 @@
+from crispy_forms.bootstrap import FieldWithButtons, StrictButton
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
+from crispy_forms.layout import Layout, Fieldset, Submit, Row, Column
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
-from rooms.forms import SubmitButtonMixin
+from django.forms.widgets import HiddenInput
 
 from .models import PlayerUser, CroupierUser, BaseUser
 from django.db import transaction
@@ -10,13 +11,17 @@ from django.db import transaction
 
 class PlayerUserCreationForm(UserCreationForm):
     helper = FormHelper()
-    helper.add_input(
-        Submit('submit', 'Register', css_class="btn btn-success")
+    helper.add_input(Layout(
+        Submit('submit', 'Register', css_class="btn btn-success"),
+
+    )
+
     )
     helper.form_method = 'POST'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         self.fields['email'].widget.attrs['placeholder'] = 'example@example.com'
         self.fields['password2'].widget.attrs['placeholder'] = 'ripeti la password inserita'
 
@@ -33,7 +38,7 @@ class PlayerUserCreationForm(UserCreationForm):
             raise forms.ValidationError("Username già in uso. Scegli un altro username.")
         return username
 
-    class Meta(UserCreationForm.Meta):
+    class Meta:
         model = BaseUser
         fields = (
             'username',
@@ -42,11 +47,13 @@ class PlayerUserCreationForm(UserCreationForm):
             'password2',
             'first_name',
             'last_name',
+            'profile_pic',
         )
         labels = {
             'username': 'Nome Utente',
             'first_name': 'Nome',
             'last_name': 'Cognome',
+            'profile_pic': 'Immagine profilo',
         }
 
 
@@ -91,13 +98,3 @@ class CroupierUserCreationForm(UserCreationForm):
             'first_name': 'Nome',
             'last_name': 'Cognome',
         }
-
-
-class UserUpdateProfilePic(SubmitButtonMixin):
-    helper = FormHelper()
-    helper.form_method = 'POST'
-    helper.add_input(Submit('submit', 'Save'))
-
-    class Meta:
-        model = BaseUser
-        fields = ('profile_pic',)

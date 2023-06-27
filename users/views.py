@@ -5,7 +5,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, DetailView, ListView, UpdateView, DeleteView, FormView, TemplateView
-from .forms import UserUpdateProfilePic, PlayerUserCreationForm, CroupierUserCreationForm
+from .forms import PlayerUserCreationForm, CroupierUserCreationForm
 
 from .models import BaseUser, PlayerUser, CroupierUser
 from rooms.models import Room
@@ -57,10 +57,11 @@ class CroupierSignUpView(CreateView):
 
 @login_required
 # from FieldBooking.decorators import player_only
-def Profile(request, pk):
+def profile(request, pk):
     if request.method == 'GET':
         user_request = pk
         user = BaseUser.objects.filter(id=user_request)
+        form_pic = PlayerUserCreationForm(instance=user[0])
 
         if user and user.first().is_superuser:
             return render(request, 'users/profile.html', context={})
@@ -70,8 +71,9 @@ def Profile(request, pk):
             if croupier.room:
                 room = Room.objects.get(id=croupier.room_id)
                 form = RoomCreationForm(instance=room)
+
                 return render(request, 'users/croupier_profile.html',
-                              context={'croupier': croupier, 'room': room, 'form': form})
+                              context={'croupier': croupier, 'room': room, 'form': form, 'form_pic': form_pic})
             return render(request, 'users/croupier_profile.html',
                           context={'croupier': croupier})
         elif user and user.first().is_player:
@@ -80,10 +82,10 @@ def Profile(request, pk):
             player = PlayerUser.objects.get(user_id=user_request)
             # TODO stanze associate al profilo
             booking_dict = {}
-            return render(request, 'users/player_profile.html', context={'player': player})
+            return render(request, 'users/player_profile.html', context={'player': player, 'form_pic': form_pic})
 
 
-def SaldoUpdate(request, pk):
+def saldo_update(request, pk):
     player = get_object_or_404(PlayerUser, user_id=pk)
 
     if request.method == 'POST':
@@ -96,8 +98,16 @@ def SaldoUpdate(request, pk):
     return redirect('users:profile', pk)
 
 
-class UpdateProfilePic(UpdateView):
-    model = BaseUser
-    template_name = "users/update_profile_pic.html"
-    form_class = UserUpdateProfilePic
+def pic_update(request, pk):
+    user = get_object_or_404(BaseUser, id=pk)
+    if request.method == 'POST':
+        form = PlayerUserCreationForm(request.POST, request.FILES, instance=user)
+        # TODO: il form non è valido una volta compilato, perchè?
+        if form.is_valid():
+            if not user.profile_pic:
+                user.profile_pic = "profile_pics/profile_no_pic.jpg"
+                user.save()
 
+            form.save()
+
+    return redirect('users:profile', pk)

@@ -21,10 +21,10 @@
 <body>
 
 <style>
-        .signup-box {
-            margin-bottom: 40px; /* Aggiungi spazio vuoto di 20px nella parte inferiore del contenitore */
-        }
-    </style>
+    .signup-box {
+        margin-bottom: 40px; /* Aggiungi spazio vuoto di 20px nella parte inferiore del contenitore */
+    }
+</style>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark custom-navbar">
     <a class="navbar-brand" href="{% url 'core:home' %}">
@@ -40,11 +40,11 @@
                 <li class="nav-item">
                     <a class="nav-link"
                        href="{% url 'users:profile' user.id %}">Ciao, {{ user.username }}
-                        <img src="{{ user.get_profile_pic_url }}" class="img-header rounded-circle" ></a>
+                        <img src="{{ user.get_profile_pic_url }}" class="img-header rounded-circle"></a>
                 </li>
                 {% if user.is_croupier %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'rooms:create-room' user.id%}">Crea la tua sala</a>
+                        <a class="nav-link" href="{% url 'rooms:create-room' user.id %}">Crea la tua sala</a>
                     </li>
 
                 {% elif user.is_player %}
@@ -107,6 +107,7 @@
         <div class="footer" id="orario-data"></div>
     </div>
 </footer>
+
 
 <script>
     function mostraOrario() {

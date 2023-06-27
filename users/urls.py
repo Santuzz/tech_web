@@ -15,7 +15,7 @@ urlpatterns = [
     path('auth/login', auth_views.LoginView.as_view(), name='login'),
     path('auth/logout', auth_views.LogoutView.as_view(), name='logout'),
 
-    path('<int:pk>/profile', views.Profile, name="profile"),
-    path('<int:pk>/aggiorna-saldo', views.SaldoUpdate, name='update_saldo'),
-    path('<int:pk>/update-profile-pic', views.UpdateProfilePic.as_view(), name='update-profile-pic'),
+    path('<int:pk>/profile', views.profile, name="profile"),
+    path('<int:pk>/aggiorna-saldo', views.saldo_update, name='update_saldo'),
+    path('<int:pk>/update-profile-pic', views.pic_update, name='update-pic'),
 ]
