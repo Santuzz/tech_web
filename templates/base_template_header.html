@@ -1,0 +1,146 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title> Santo's casino - {% block head_title %}{% endblock %}</title>
+
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+    <!-- FontAwesome CSS -->
+    <script src="https://kit.fontawesome.com/825e3a16e3.js" crossorigin="anonymous"></script>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+
+</head>
+<body>
+
+<style>
+        .signup-box {
+            margin-bottom: 40px; /* Aggiungi spazio vuoto di 20px nella parte inferiore del contenitore */
+        }
+    </style>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark custom-navbar">
+    <a class="navbar-brand" href="{% url 'core:home' %}">
+        <i class="fas fa-dollar-sign"></i>anto's Casino
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main_nav" aria-expanded="false"
+            aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="main_nav">
+        <ul class="navbar-nav ml-auto">
+            {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="{% url 'users:profile' user.id %}">Ciao, {{ user.username }}
+                        <img src="{{ user.get_profile_pic_url }}" class="img-header rounded-circle" ></a>
+                </li>
+                {% if user.is_croupier %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'rooms:create-room' user.id%}">Crea la tua sala</a>
+                    </li>
+
+                {% elif user.is_player %}
+                    <li class="nav-item active">
+
+                    <a class="nav-link">Saldo disponibile: {{ player.saldo }}</a>
+
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'users:logout' %}">Logout</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'users:login' %}">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'users:signup' %}">Registrati</a>
+                </li>
+            {% endif %}
+        </ul>
+    </div> <!-- navbar-collapse.// -->
+</nav>
+
+<div class="margin-from-navbar">
+    {% block content %}
+
+    {% endblock %}
+</div>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"
+        integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw=="
+        crossorigin="anonymous"></script>
+
+
+{% block javascript %}
+
+{% endblock %}
+
+</body>
+
+
+<footer class="bg-primary text-white text-center text-lg-start fixed-bottom">
+
+    <div class="text-center p-1" style="background-color: rgba(0.9, 0.1, 0.1, 0.8)">
+        <div class="footer" id="orario-data"></div>
+    </div>
+</footer>
+
+<script>
+    function mostraOrario() {
+
+        var data = new Date();
+        var giorno = data.getDate();
+        var mese = data.getMonth() + 1; // I mesi iniziano da zero, quindi aggiungiamo 1
+        var anno = data.getFullYear();
+        var ora = data.getHours();
+        var minuti = data.getMinutes();
+        var secondi = data.getSeconds();
+
+        giorno = aggiungiZero(giorno);
+        mese = aggiungiZero(mese);
+        anno = aggiungiZero(anno);
+        ora = aggiungiZero(ora);
+        minuti = aggiungiZero(minuti);
+        secondi = aggiungiZero(secondi);
+
+        var orarioElemento = document.getElementById("orario-data");
+
+        orarioElemento.textContent = giorno + "/" + mese + "/" + anno + " " + ora + ":" + minuti + ":" + secondi;
+
+        setTimeout(mostraOrario, 1000);
+    }
+
+    function aggiungiZero(numero) {
+        if (numero < 10) {
+            numero = "0" + numero;
+        }
+        return numero;
+    }
+
+    mostraOrario();
+
+</script>
+</html>

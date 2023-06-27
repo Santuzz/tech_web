@@ -1,0 +1,38 @@
+{% extends 'base_template_header.html' %}
+{% load static %}
+
+{% block head_title %}Homepage{% endblock %}
+
+{% block content %}
+
+    <div style="text-align: center;">
+        <div class="container div-fade-in div-move-down">
+            <h2 class="text-center custom-font">Santo's Casino</h2>
+            <h3 class="text-center custom-font">Accedi alla sezione che preferisci</h3>
+            <h4 class="text-center custom-font "></h4>
+        </div>
+        <div class="w-50 p-3 div-form-home" style="display: inline-block;">
+            <form name="search-field" method="GET" action="{% url 'rooms:room-search' %}">
+                <div class="form-group mb-2">
+                    <label for="SectionInput">Sezioni</label>
+                    <select class="form-control" id="SectionInput" name="section-type">
+                        {% for value in section %}
+                                {% if forloop.counter0 == 0 %}
+                                    <option value="{{ value }}" selected="selected">{{ value  }}</option>
+                                    {% else %}
+                                    <option value="{{ value  }}" >{{ value  }}</option>
+                                {% endif %}
+                            {% endfor %}
+
+                    </select>
+                </div>
+                <input type="submit" id="search-button" class="btn " value="Cerca le sale disponibili">
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascript %}
+
+{% endblock %}

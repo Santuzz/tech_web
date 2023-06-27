@@ -1,0 +1,24 @@
+{% extends 'base_template_header.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block head_title %}Aggiorna stanza{% endblock %}
+{% block content %}
+    <div class="d-flex justify-content-center">
+        <div class="rounded p-3 shadow signup-box">
+            <h1 class="text-center">Aggiorna la tua stanza</h1>
+            <form id="updateRoomForm" enctype="multipart/form-data" method="post" action="{% url 'rooms:update-room' room.id user.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ next }}">
+                {{ form|crispy }}
+                <button type="submit" class="btn btn-success">Salva</button>
+            </form>
+
+        </div>
+    </div>
+
+    <style>
+        .signup-box {
+            margin-bottom: 40px; /* Aggiungi spazio vuoto di 20px nella parte inferiore del contenitore */
+        }
+    </style>
+{% endblock %}

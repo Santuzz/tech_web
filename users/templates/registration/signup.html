@@ -1,0 +1,13 @@
+{% extends 'base_template_header.html' %}
+
+{% block content %}
+    <div class="d-flex justify-content-center">
+        <div class="rounded p-3 shadow custom-box">
+            <h2>Registra un nuovo account</h2>
+            <p class="lead">Seleziona il tipo di account che vuoi creare</p>
+
+            <a href="{% url 'users:player-signup' %}" class="btn btn-player btn-lg" role="button">Player</a>
+            <a href="{% url 'users:croupier-signup' %}" class="btn btn-croupier btn-lg" role="button">Croupier</a>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base_template_header.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="d-flex justify-content-center">
+        <div class="rounded p-3 shadow signup-box">
+            {% if user_type == 'player' %}
+                <h1 class="text-center">Crea il tuo nuovo account utente</h1>
+                <h4>Registrandoti, potrai usufruire dei seguenti servizi</h4>
+                <ul>
+                    <li>Accedere alle sale</li>
+                    <li>Gestire il profilo, potendo caricare e prelevare soldi dal saldo</li>
+                    <li>Iniziare a divertirti al casinò più pazzo del mondo</li>
+                </ul>
+            {% else %}
+                <h1 class="text-center">Crea un nuovo account croupier </h1>
+                <h4>Registrandoti potrai usufruire dei seguenti servizi</h4>
+                <ul>
+                    <li>Creare e gestire la tua sala</li>
+                    <li>Spennare fino all'ultimo centesimo a chi tenta la fortuna</li>
+                </ul>
+            {% endif %}
+            <form method="post" novalidate>
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ next }}">
+                {{ form|crispy }}
+                <button type="submit" class="btn btn-success">Sign up</button>
+            </form>
+
+        </div>
+    </div>
+
+
+{% endblock %}

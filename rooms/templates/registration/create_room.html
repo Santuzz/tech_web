@@ -1,0 +1,32 @@
+{% extends 'base_template_header.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="d-flex justify-content-center">
+        <div class="rounded p-3 shadow signup-box">
+            {% if room %}
+
+                <h1 class="text-center">Benvenuto, {{ user.username }}</h1>
+                <h4>Registra la sala dei tuoi sogni per iniziare a guadagnare</h4>
+
+                <form method="post" enctype="multipart/form-data" id="create-room-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ next }}">
+                    {{ form|crispy }}
+                    <button type="submit" class="btn btn-success">Crea Stanza</button>
+                </form>
+            {% else %}
+                <h1 class="text-center">Spiacente, {{ user.username }}</h1>
+                <h4>Al tuo account è già associata una stanza. Prima di poterne creare una nuova assicurati di
+                    eliminarla</h4>
+                <div class="d-flex justify-content-center">
+                    <a class="btn btn-primary" href="{% url 'users:profile' user.id %}"
+                       type="button">Vai al profilo</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
+

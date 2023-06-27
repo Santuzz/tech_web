@@ -1,0 +1,208 @@
+{% extends 'base_template_header.html' %}
+{% load static %}
+
+
+{% block head_title %}Search{% endblock %}
+
+
+{% block content %}
+    <div class="container w-100 top-div">
+        <div class="row d-flex">
+            <div class="mr-auto p-2">
+                <h3 class="text-capitalize">Sale popolari</h3>
+            </div>
+            <div class="p-2">
+                <div>
+                    <a class="btn minimize-button" data-toggle="collapse" href="#row-buttons" role="button"
+                       aria-expanded="false" aria-controls="collapseExample">
+                        <i class="fas fa-window-minimize"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {# TODO: aggiungere le sale più cercate #}
+        <div id="row-buttons" class="row collapse show">
+            <ul class="flex-container wrap">
+                {% for key, value in favorite.items %}
+                    {% for x in value %}
+                        <li class="search-btt-go-room">
+                            <a class="btn custom-btt-go-div-club text-capitalize" href="#{{ key }}"
+                               role="button">{{ x.room_name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container w-75">
+        <form name="search-field" method="GET" action="{% url 'rooms:room-search' %}">
+            <div class="row align-items-center justify-content-between">
+                <div class="col">
+                    <div class="row">
+                        <div class="col p-2">
+                            <label class="text-white outlined-label" for="SectionInput">Sezione</label>
+                            {# TODO: effettuare una ricerca avanzata in base ai campi delle sale #}
+                            <select id="form_frame" class="form-control" id="SectionInput" name="section-type">
+                                {% for value in section %}
+                                    {% if forloop.counter0 == 0 %}
+                                        <option value="{{ value }}" selected="selected">{{ value }}</option>
+                                    {% else %}
+                                        <option value="{{ value }}">{{ value }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row mt-2 pt-2 text-center">
+                <div class="col">
+                    <input type="submit" id="search-btt" class="btn btn-dark" value="Cerca le sale disponibili">
+                </div>
+                <div class="col">
+                    <button id="minimize-all-button" class="btn btn-dark" type="button">Espandi Tutto</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+
+
+    {% if not room.items %}
+        <div class="container w-50 mt-5 p-3 bg-warning rounded text-center">
+            <p>Spiacente, nessuna sala disponibile per questa sezione</p>
+        </div>
+    {% else %}
+        <div class="container">
+            <div class="row">
+                {% for key, value in room.items %}
+                    <div class="col-sm-4">
+                        <div id="{{ key }}" class="container search-div-club mb-5 mt-3">
+                            <div class="row mb-2">
+                                {% for x in value %}
+                                    {# Informazioni sala #}
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="thumbnail" style="position: relative;">
+
+                                                    <img class="img-thumbnail" src="/media/uploads/{{ x.cover_pic }}">
+
+                                                <a class="btn minimize-button" data-toggle="collapse"
+                                                   href="#row-{{ key }}" role="button" aria-expanded="false"
+                                                   aria-controls="collapseExample"
+                                                   style="position: absolute; top: 10px; right: 10px;border: 2px solid white;">
+                                                    <i class="fas fa-window-minimize"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12 d-flex align-items-center justify-content-center">
+
+                                            <div class="mr-auto p-2">
+                                                <span class="d-block text-center room-thumbnail-title">{{ x.room_name }}</span>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="collapse" id="row-{{ key }}">
+                                        <div class="row mt-3" style="text-align: center">
+                                            <div class="col-sm-4" style="margin-left: 5px;">
+                                                <p>
+                                                    <i class="fa-regular fa-user"></i> {{ x.seats_occupied }}/{{ x.seats_number }}
+                                                </p>
+                                            </div>
+                                            <div class="col-sm-7">
+                                                <p>Puntata minima: {{ x.minimum_bet }}€</p>
+                                            </div>
+                                            <div class="col-sm-4" style="margin-left: 5px;">
+                                                <p><i class="fas fa-door-open"></i> {{ x.opening|time:"H:i" }}</p>
+                                            </div>
+                                            <div class="col-sm-7">
+                                                <p><i class="fas fa-door-closed"></i> {{ x.closing|time:"H:i" }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {# TODO: verificare che l'utente sia registrato per poter entrare nella sala #}
+                                    <div class="row">
+                                        <div class="col-sm-12 d-flex align-items-center justify-content-center">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12 d-flex align-items-center justify-content-center">
+                                            <div class="p-2">
+                                                {% if user.is_authenticated %}
+                                                    <a class="custom-button-prenota custom-btn btn"
+                                                       href="{% url 'rooms:room-overview' x.id %}">
+                                                        <i class="fas fa-dice"></i><span
+                                                            class="ml-2">Vai alla Sala</span>
+                                                    </a>
+                                                {% else %}
+                                                    <a class="custom-button-prenota custom-btn btn"
+                                                       href="{% url 'users:login' %}">
+                                                        <i class="fas fa-dice"></i><span class="ml-2">Accedi per entrare nella sala</span>
+                                                    </a>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                {% endfor %} <!-- Fine for info sala -->
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    {% endif %}
+
+
+{% endblock %}
+
+
+{% block javascript %}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var minimizeAllButton = document.getElementById("minimize-all-button");
+            var minimizeButtons = document.getElementsByClassName("minimize-button");
+
+            minimizeAllButton.addEventListener("click", function () {
+                //var isExpanded = minimizeAllButton.getAttribute("aria-expanded") === "true";
+                var isCompressed = minimizeAllButton.textContent === "Espandi Tutto"
+
+                for (var i = 0; i < minimizeButtons.length; i++) {
+                    var button = minimizeButtons[i];
+
+                    if (isCompressed && button.ariaExpanded === "false") {
+                        button.click();
+
+                    } else if (!isCompressed && button.ariaExpanded === "true") {
+                        button.click();
+
+                    }
+                }
+
+                minimizeAllButton.classList.toggle("btn-primary");
+                if (minimizeAllButton.textContent === "Espandi Tutto") {
+                    minimizeAllButton.textContent = "Comprimi Tutto";
+                } else {
+                    minimizeAllButton.textContent = "Espandi Tutto";
+                }
+            });
+        });
+
+    </script>
+
+
+    <script>
+        var urlParams = new URLSearchParams(window.location.search);
+        var sectionType = urlParams.get('section-type');
+        $('#form_frame').val(sectionType);
+    </script>
+{% endblock %}
