@@ -10,7 +10,7 @@ from django.db import transaction
 class RoomCreationForm(forms.ModelForm):
     helper = FormHelper()
     helper.add_input(
-        Submit('submit', 'Register', css_class='btn btn-success')
+        Submit('submit', 'Salva', css_class='btn btn-success')
     )
     opening = forms.TimeField(
         widget=forms.TimeInput(format='%H:%M'),

@@ -26,7 +26,7 @@
     }
 </style>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark custom-navbar">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark custom-navbar fixed-top">
     <a class="navbar-brand" href="{% url 'core:home' %}">
         <i class="fas fa-dollar-sign"></i>anto's Casino
     </a>
@@ -50,7 +50,7 @@
                 {% elif user.is_player %}
                     <li class="nav-item active">
 
-                    <a class="nav-link">Saldo disponibile: {{ player.saldo }}</a>
+                    <a class="nav-link">Saldo disponibile: <span id="saldo-input">{{ player.saldo }}</span></a>
 
                 {% endif %}
                 <li class="nav-item">
@@ -92,11 +92,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"
         integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw=="
         crossorigin="anonymous"></script>
-
-
-{% block javascript %}
-
-{% endblock %}
 
 </body>
 

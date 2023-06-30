@@ -66,11 +66,9 @@ def room_signup(request, room_id):
     room = Room.objects.get(id=room_id)
     user_player = BaseUser.objects.get(username=request.user)
     player = PlayerUser.objects.get(user_id=user_player.id)
-
-    room_player = RoomPlayer(room=room, player=player)  # Crea un nuovo oggetto RoomPlayer
-    print(room_player)
+    room_player = RoomPlayer.objects.create(room=room, player=player)  # Crea un nuovo oggetto RoomPlayer
     room_player.save()
-    return redirect('rooms:room-overview')
+    return redirect('rooms:room-overview', room_id)
 
 
 def room_overview(request, pk):
@@ -84,7 +82,7 @@ def room_overview(request, pk):
         has_room = player.rooms.filter(pk=room.id).exists()
         return render(request, 'rooms/detail_room.html', context={'room': room,
                                                                   'croupier': user,
-                                                                  'user_room': has_room,
+                                                                  'has_room': has_room,
                                                                   'player': player})
 
 
@@ -106,8 +104,8 @@ def search_room(request):
             player = PlayerUser.objects.get(user_id=user.id)
 
             return render(request, 'rooms/search_room.html', context={'room': room_dict,
-                                                              'section': section,
-                                                              'player': player})
+                                                                      'section': section,
+                                                                      'player': player})
 
         return render(request, 'rooms/search_room.html', context={'room': room_dict,
                                                                   'section': section,

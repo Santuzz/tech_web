@@ -1,9 +1,11 @@
 {% extends 'base_template_header.html' %}
+{% load crispy_forms_field %}
 {% load static %}
-{% block head_title %}Profilo utente{% endblock %}
+{% load crispy_forms_tags %}
+{% block head_title %}Profilo{% endblock %}
 
-{# TODO: ho fatto copia e incolla dal player profile, modificarlo per renderlo personale di un admin #}
-
+{# TODO: aggiungere un grafico (chart.js) che visualizzi l'andamento dei guadagni della sala #}
+{# TODO: aggiungere lo storico dei pagamenti degli utenti #}
 {% block content %}
     <div class="container">
         <div class="main-body">
@@ -15,43 +17,13 @@
                                 <img src="{{ user.get_profile_pic_url }}" alt="" class="rounded-circle" width="150">
                                 <div class="mt-3">
                                     <h4>{{ user.username }}</h4>
-                                    <p class="text-secondary mb-1">Player</p>
-                                    <a class="btn btn-primary" href="{% url 'users  :update-profile-pic' user.id %}"
-                                       type="button">modifica immagine profilo</a>
-
+                                    <button type="button" class="update-pic bs-modal btn btn-primary"
+                                            data-form-url="{% url 'users:update-pic' user.id %}">
+                                        modifica immagine profilo
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="card mt-3">
-                        <ul class="list-group list-group-flush">
-                            {% for key, value in booking.items %}
-                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                    {% if key == 'padel' %}
-                                        <img src="{% static "img/padel.svg" %}" width="24" height="24">
-                                    {% elif key == 'tennis' %}
-                                        <img src="{% static "img/tennis.svg" %}" width="24" height="24">
-                                    {% elif key == 'beachvolley' %}
-                                        <img src="{% static "img/beach-volleyball.svg" %}" width="24" height="24">
-                                    {% elif key == 'pallavolo' %}
-                                        <img src="{% static "img/volleyball.svg" %}" width="24" height="24">
-                                    {% elif key == 'calcio' %}
-                                        <img src="{% static "img/football.svg" %}" width="24" height="24">
-                                    {% endif %}
-                                    <span class="text-secondary">
-                                        {% if not value %}
-                                            <a class="btn btn-primary disabled text-capitalize" data-toggle="collapse"
-                                               href="" role="button" aria-expanded="true"
-                                               aria-controls="multiCollapseExample1">{{ key }}</a>
-                                        {% else %}
-                                            <a class="btn btn-primary text-capitalize" data-toggle="collapse"
-                                               href="#{{ key }}" role="button" aria-expanded="true"
-                                               aria-controls="multiCollapseExample1">{{ key }}</a>
-                                        {% endif %}
-                                    </span>
-                                </li>
-                            {% endfor %}
-                        </ul>
                     </div>
                 </div>
                 <div class="col-md-8">
@@ -92,86 +64,92 @@
                                     {{ user.date_joined|date:"d/m/y H:i:s" }}
                                 </div>
                             </div>
-                            <hr>
+                            {% block saldo %}
+                            {% endblock %}
                         </div>
                     </div>
-                    <div class="row gutters-sm">
-                        <div class="col-sm-12 mb-3">
-                            <div class="card h-100">
-                                <div class="card-body">
-                                    <h6 class="d-flex align-items-center mb-3">Le Tue Prenotazioni</h6>
-                                    {% for key, value in booking.items %}
-                                        {% if value %}
-                                            <div class="collapse multi-collapse show" id="{{ key }}">
-                                                <h2 class="text-capitalize text-center"> {{ key }}</h2>
-                                                <div class="table-responsive">
-                                                    <table class="table table-striped table-dark table-bordered ">
-                                                        <thead>
-                                                        <tr>
-                                                            <th class="">Data</th>
-                                                            <th class="">Club</th>
-                                                            <th class="">Orario</th>
-                                                            <th class="">Elimina</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        {% for v in value %}
-                                                            <tr>
-                                                                <td class="">{{ v.date }}</td>
-                                                                <td class="">{{ v.club__club_name }}</td>
-                                                                <td class="">{{ v.start| date:"H:i" }}
-                                                                    / {{ v.end|date:"H:i" }}</td>
-                                                                {% if key == 'padel' %}
-                                                                    <td class="text-center">
-                                                                        <a class="btn btn-danger"
-                                                                           href="{% url 'FieldBooking:padel-booking-delete' v.id %}">
-                                                                            <i class='far fa-clipboard'></i>
-                                                                        </a>
-                                                                    </td>
-                                                                {% elif key == 'tennis' %}
-                                                                    <td class="text-center">
-                                                                        <a class="btn btn-danger"
-                                                                           href="{% url 'FieldBooking:tennis-booking-delete' v.id %}">
-                                                                            <i class='far fa-clipboard'></i>
-                                                                        </a>
-                                                                    </td>
-                                                                {% elif key == 'calcio' %}
-                                                                    <td class="text-center">
-                                                                        <a class="btn btn-danger"
-                                                                           href="{% url 'FieldBooking:football-booking-delete' v.id %}">
-                                                                            <i class='far fa-clipboard'></i>
-                                                                        </a>
-                                                                    </td>
-                                                                {% elif key == 'pallavolo' %}
-                                                                    <td class="text-center">
-                                                                        <a class="btn btn-danger"
-                                                                           href="{% url 'FieldBooking:volleyball-booking-delete' v.id %}">
-                                                                            <i class='far fa-clipboard'></i>
-                                                                        </a>
-                                                                    </td>
-                                                                {% elif key == 'beachvolley' %}
-                                                                    <td class="text-center">
-                                                                        <a class="btn btn-danger"
-                                                                           href="{% url 'FieldBooking:beachvolley-booking-delete' v.id %}">
-                                                                            <i class='far fa-clipboard'></i>
-                                                                        </a>
-                                                                    </td>
-                                                                {% endif %}
-                                                            </tr>
-                                                        {% endfor %}
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {% block profile %}
+                    {% endblock %}
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- update pic Modal -->
+    <div id="updatePicModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modifica Immagine</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="updatePicForm" method="post" enctype="multipart/form-data"
+                          action="{% url 'users:update-pic' user.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ next }}">
+                        {% crispy form_pic %}
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" style="margin-top: 5px">Chiudi</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function addImageOnChange() {
+            // Seleziona l'input file
+            var input = $("#id_profile_pic");
+
+            // Aggiungi un gestore per l'evento change dell'input file
+            input.on("change", function () {
+                // Seleziona il div in cui visualizzare l'immagine
+                var displayDiv = $("#display-image");
+
+                // Rimuovi eventuali immagini presenti nel div
+                displayDiv.empty();
+
+                // Leggi il file selezionato
+                var file = this.files[0];
+
+                // Crea un oggetto URL per l'immagine selezionata
+                var imageUrl = URL.createObjectURL(file);
+
+                // Crea un elemento immagine
+                var image = $("<img>");
+                image.attr("src", imageUrl);
+                image.css("max-width", "100px");
+                image.css("max-height", "100px");
+
+                // Aggiungi l'immagine al div solo se è presente un'immagine selezionata
+                if (file) {
+                    displayDiv.append(image);
+                }
+            });
+        }
+
+
+        $(document).ready(function () {
+            $(".update-pic").click(function () {
+                var formUrl = $(this).data('form-url');
+                $("#updatePicForm").attr('action', formUrl);
+                $("#updatePicModal").modal('show');
+                addImageOnChange();
+
+            });
+
+        });
+
+    </script>
+
+    {% block modal %}
+
+    {% endblock %}
+
+    {% block javascript %}
+    {% endblock %}
+
 {% endblock %}
+

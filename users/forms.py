@@ -1,23 +1,49 @@
 from crispy_forms.bootstrap import FieldWithButtons, StrictButton
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, Submit, Row, Column
+from crispy_forms.layout import Layout, Fieldset, Submit, Row, Column, HTML
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
+from django.contrib.auth.forms import UserCreationForm, SetPasswordForm, UserModel
 from django.forms.widgets import HiddenInput
 
 from .models import PlayerUser, CroupierUser, BaseUser
 from django.db import transaction
 
 
+class UserUpdatePicForm(forms.ModelForm):
+    helper = FormHelper()
+    helper.form_method = 'POST'
+    helper.layout = Layout(
+        'profile_pic',
+        HTML(
+            """<div id="display-image"></div>
+            <hr>""", ),
+        Submit('submit', 'Salva', css_class="btn btn-success"),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        pic = super().save(commit=False)
+        pic.save()
+        return pic
+
+    class Meta:
+        model = BaseUser
+        fields = (
+            'profile_pic',
+        )
+        labels = {
+            'profile_pic': 'Immagine profilo',
+        }
+
+
 class PlayerUserCreationForm(UserCreationForm):
     helper = FormHelper()
-    helper.add_input(Layout(
-        Submit('submit', 'Register', css_class="btn btn-success"),
-
-    )
-
-    )
     helper.form_method = 'POST'
+    helper.add_input(
+        Submit('submit', 'Salva', css_class='btn btn-success')
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -47,22 +73,20 @@ class PlayerUserCreationForm(UserCreationForm):
             'password2',
             'first_name',
             'last_name',
-            'profile_pic',
         )
         labels = {
             'username': 'Nome Utente',
             'first_name': 'Nome',
             'last_name': 'Cognome',
-            'profile_pic': 'Immagine profilo',
         }
 
 
 class CroupierUserCreationForm(UserCreationForm):
     helper = FormHelper()
-    helper.add_input(
-        Submit('submit', 'Register', css_class="btn btn-success")
-    )
     helper.form_method = 'POST'
+    helper.add_input(
+        Submit('submit', 'Salva', css_class='btn btn-success')
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -71,29 +71,17 @@ class BaseUser(AbstractBaseUser, PermissionsMixin):
         return True
 
     def save(self, *args, **kwargs):
-        try:
-            old_instance = BaseUser.objects.filter(id=self.id)
-            if old_instance[0].profile_pic:
-                try:
-                    if old_instance and old_instance[0].profile_pic.name != self.profile_pic.name:
-                        os.remove(old_instance[0].profile_pic.path)
-                except:
-                    print("ACCOUNT - Errore durante eliminazione foto precendente")
-        except:
-            pass
+
         super().save(*args, **kwargs)
 
     def get_profile_pic_url(self):
         if self.profile_pic and hasattr(self.profile_pic, 'url'):
             return self.profile_pic.url
         else:
-            return '/static/img/profile_no_pic.jpg'
+            return '/static/img/profile_no_pic.png'
 
     def get_absolute_url(self):
         return reverse('user_mgmt:profile', kwargs={'pk': self.pk})
-
-    def email_user(self, subject, message, from_email=None, **kwargs):
-        send_mail(subject, message, from_email, [self.email], **kwargs)
 
 
 class PlayerUser(models.Model):
@@ -107,7 +95,7 @@ class PlayerUser(models.Model):
 
 class CroupierUser(models.Model):
     user = models.OneToOneField(BaseUser, on_delete=models.CASCADE, primary_key=True, related_name="croupier")
-    room = models.OneToOneField(Room, on_delete=models.CASCADE, related_name='croupier_room', null=True)
+    room = models.OneToOneField(Room, on_delete=models.SET_NULL, related_name='croupier_room', null=True, blank=True)
 
     def __str__(self):
         return 'CROUPIER - {} - {}'.format(self.user.id, self.user.username)
@@ -118,11 +106,16 @@ class RoomPlayer(models.Model):
     player = models.ForeignKey(PlayerUser, on_delete=models.CASCADE, related_name="player_room")
 
     def save(self, *args, **kwargs):
-        self.room.seats_occupied = self.room.room_player.count()  # Update seats_occupied when saving
-        self.room.save()  # Save the room object
+        if self.room.seats_occupied < self.room.seats_number:
+            self.room.seats_occupied = self.room.room_player.count()  # Update seats_occupied when saving
+            self.room.save()  # Save the room object
+
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         self.room.seats_occupied = self.room.room_player.count() - 1  # Update seats_occupied when deleting
         self.room.save()  # Save the room object
         super().delete(*args, **kwargs)
+
+    def __str__(self):
+        return 'RP - {} - {}'.format(self.room_id, self.player_id)

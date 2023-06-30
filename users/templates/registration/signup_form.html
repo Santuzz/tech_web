@@ -24,12 +24,50 @@
             <form method="post" novalidate>
                 {% csrf_token %}
                 <input type="hidden" name="next" value="{{ next }}">
-                {{ form|crispy }}
-                <button type="submit" class="btn btn-success">Sign up</button>
+                {% crispy form %}
             </form>
 
         </div>
     </div>
+
+    <script>
+        function addImageOnChange() {
+            // Seleziona l'input file
+            var input = $("#id_profile_pic");
+
+            // Aggiungi un gestore per l'evento change dell'input file
+            input.on("change", function () {
+                // Seleziona il div in cui visualizzare l'immagine
+                var displayDiv = $("#display-image");
+
+                // Rimuovi eventuali immagini presenti nel div
+                displayDiv.empty();
+
+                // Leggi il file selezionato
+                var file = this.files[0];
+
+                // Crea un oggetto URL per l'immagine selezionata
+                var imageUrl = URL.createObjectURL(file);
+
+                // Crea un elemento immagine
+                var image = $("<img>");
+                image.attr("src", imageUrl);
+                image.css("max-width", "100px");
+                image.css("max-height", "100px");
+
+                // Aggiungi l'immagine al div solo se è presente un'immagine selezionata
+                if (file) {
+                    displayDiv.append(image);
+                }
+            });
+        }
+
+
+        $(document).ready(function () {
+            addImageOnChange();
+        });
+
+    </script>
 
 
 {% endblock %}

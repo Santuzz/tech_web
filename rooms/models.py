@@ -74,6 +74,12 @@ class Room(models.Model):
     def get_absolute_url(self):
         return reverse('rooms:room-overview', kwargs={'pk': self.pk})
 
+    def get_minimum_bet(self):
+        return float(self.minimum_bet)
+
+    def is_subscribable(self):
+        return self.seats_number > self.seats_occupied
+
     def __str__(self):
         return 'ROOM {} - {} - {}'.format(
             self.id, self.room_name, self.section)

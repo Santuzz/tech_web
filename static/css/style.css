@@ -808,3 +808,10 @@ div.div-under-club {
 .rounded-corner {
   border-radius: 10px; /* Imposta il raggio di curvatura degli angoli */
 }
+
+#display-image{
+  width: 100px;
+  height: 100px;
+  background-position: center;
+  background-size: cover;
+}
