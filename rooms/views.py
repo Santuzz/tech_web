@@ -106,15 +106,15 @@ def search_room(request):
         minimum_bet = request.GET.get('minimum-bet')
         opening = request.GET.get('opening-time')
         opening_time = None
-        if opening is not "":
+        if opening != "" and opening is not None:
             opening_time = datetime.strptime(opening, '%H:%M').time()
         closing = request.GET.get('closing-time')
         closing_time = None
-        if opening is not "":
+        if closing != "" and closing is not None:
             closing_time = datetime.strptime(closing, '%H:%M').time()
         seats_available = request.GET.get('seats-available')
         rooms = Room.objects.filter(section__section_name=section_type).order_by('room_name')
-        if seats_number is not None and seats_number is not "":
+        if seats_number is not None and seats_number != "":
             rooms = rooms.filter(seats_number__lt=int(seats_number))
         if minimum_bet is not None:
             rooms = rooms.filter(minimum_bet=minimum_bet)
