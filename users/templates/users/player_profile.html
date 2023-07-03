@@ -3,9 +3,6 @@
 {% load static %}
 {% block head_title %}Profilo utente{% endblock %}
 
-{# TODO: aggiungere un grafico (chart.js) che visualizzi l'andamento del saldo utente #}
-{# TODO: aggiungere lo storico dei pagamenti dell'utente #}
-
 {% block saldo %}
     <hr>
     <div class="row">
@@ -31,7 +28,6 @@
                 <h4 class="d-flex align-items-center mb-3">Stanze a cui sei iscritto</h4>
                 <hr>
                 {% for room in rooms %}
-                    {# TODO modificare tutta la visualizzazione #}
                     <div class="row">
                         <div class="col-sm-2">
                             <img src="{{ room.get_cover_pic_url }}" alt="" class="rounded-corner"

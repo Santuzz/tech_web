@@ -29,7 +29,7 @@ class RoomCreationForm(forms.ModelForm):
         self.fields['closing'].widget.attrs['placeholder'] = 'HH:MM'
 
     def clean(self):
-        # TODO non funziona il controllo del nome della stanza, bisogna include anche l'apostrofo
+
         re_name = r'^[a-zA-ZÀ-ÿ\'\s]+$'
         seats_number = self.cleaned_data.get('seats_number')
         room_name = self.cleaned_data.get('room_name')

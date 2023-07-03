@@ -96,8 +96,6 @@ def profile(request, pk):
             rooms = []
             for room in rooms_query:
                 rooms.append(Room.objects.get(id=room.room.id))
-            # TODO stanze associate al profilo
-            print(rooms)
             booking_dict = {}
             return render(request, 'users/player_profile.html',
                           context={'player': player, 'form_pic': form_pic, 'rooms': rooms})
@@ -120,7 +118,6 @@ def pic_update(request, pk):
     user = get_object_or_404(BaseUser, id=pk)
     if request.method == 'POST':
         form = UserUpdatePicForm(request.POST, request.FILES, instance=user)
-        # TODO: il form non è valido una volta compilato, perchè?
         if form.is_valid():
             if not user.profile_pic:
                 user.profile_pic = "profile_pics/profile_no_pic.png"
@@ -132,7 +129,6 @@ def pic_update(request, pk):
 
 
 def room_player_delete(request, room_pk):
-    # TODO non elimina alcuna relazione
     if request.method == "POST":
         # room_player = get_object_or_404(RoomPlayer, room_id=room_pk, player__user_id=request.user.id)
         # room_player = RoomPlayer.objects.get(room_id=room_pk, player__user_id=request.user.id)

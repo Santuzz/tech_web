@@ -63,8 +63,6 @@ class Room(models.Model):
             pass
         super().save(*args, **kwargs)
 
-    # TODO: definire un modo per ritornare i posti liberi
-
     def get_cover_pic_url(self):
         if hasattr(self.cover_pic, 'url'):
             return self.cover_pic.url
