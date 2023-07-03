@@ -16,13 +16,7 @@ urlpatterns = [
     path('auth/login', auth_views.LoginView.as_view(), name='login'),
     path('auth/logout', auth_views.LogoutView.as_view(), name='logout'),
 
-    path('account/login/', auth_views.LoginView.as_view(
-        extra_context={
-
-            'next': 'rooms:room-overview room.id',
-
-        },
-    ), name='login_room'),
+    path('account/login/<int:room_id>', views.CustomLoginView.as_view(), name='login_room'),
 
     path('<int:pk>/profile', views.profile, name="profile"),
     path('<int:pk>/aggiorna-saldo', views.saldo_update, name='update_saldo'),

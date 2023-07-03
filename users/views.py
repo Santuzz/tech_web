@@ -5,6 +5,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, DetailView, ListView, UpdateView, DeleteView, FormView, TemplateView
+from django.contrib.auth.views import LoginView
+
 from .forms import PlayerUserCreationForm, CroupierUserCreationForm, UserUpdatePicForm
 
 from .models import BaseUser, PlayerUser, CroupierUser, RoomPlayer
@@ -13,6 +15,7 @@ from rooms.forms import RoomCreationForm
 
 from django.contrib.auth.decorators import login_required
 import os
+from urllib.parse import urlparse, parse_qs
 
 account_activation_token = PasswordResetTokenGenerator()
 
@@ -53,6 +56,15 @@ class CroupierSignUpView(CreateView):
         croupier = CroupierUser.objects.create(user=user)
         login(self.request, user)
         return redirect('users:homepage')
+
+
+class CustomLoginView(LoginView):
+
+    def get_success_url(self):
+        # Utilizza il valore di room_id come necessario
+        url = reverse('rooms:room-overview', kwargs={'pk': self.kwargs.get('room_id')})
+        print(url)
+        return reverse('rooms:room-overview', kwargs={'pk': self.kwargs.get('room_id')})
 
 
 @login_required

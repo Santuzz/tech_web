@@ -164,7 +164,7 @@
                                                     {% endif %}
                                                 {% else %}
                                                     <a class="custom-button-prenota custom-btn btn"
-                                                       href="{% url 'users:login_room' %}">
+                                                       href="{% url 'users:login_room' rm.id%}">
                                                         <i class="fas fa-dice"></i><span class="ml-2">Accedi per entrare nella sala</span>
                                                     </a>
                                                 {% endif %}
