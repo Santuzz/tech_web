@@ -2,8 +2,8 @@
 
 Progetto realizzato per l'esame di tecnologie web del corso di ingegneria informatica presso l'Università degli studi di Modena e Reggio Emilia.
 
-Tale progetto è stato sviluppato con python 3.11 perciò versione precedenti potrebbero avere problemi di compatibilità.
-I comandi principali per far funzionare corrattemente il sistema ed installare i moduli necessari dopo aver clonato il progetto sono:
+Tale progetto è stato sviluppato con python 3.11, versioni precedenti potrebbero avere problemi di compatibilità.
+I comandi principali per far funzionare correttemente il sistema ed installare i moduli necessari dopo aver clonato il progetto sono:
 
 ```
   pipenv shell
