@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rooms',
     'crispy_forms',
     'crispy_bootstrap4',
+    'pytz',
 
 ]
 

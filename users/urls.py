@@ -18,4 +18,6 @@ urlpatterns = [
     path('<int:pk>/profile', views.profile, name="profile"),
     path('<int:pk>/aggiorna-saldo', views.saldo_update, name='update_saldo'),
     path('<int:pk>/update-profile-pic', views.pic_update, name='update-pic'),
+
+    path('<int:room_pk>/delete-room-player', views.room_player_delete, name="delete-room-player"),
 ]

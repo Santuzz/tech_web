@@ -67,12 +67,73 @@
                         </div>
                     </div>
                     <div class="row justify-content-center align-items-center">
+                        {# TODO: gestire apertura e chiusura della sala #}
+
+                        <label for="section-input"></label>
+                        <select class="form-control" id="section-input" name="section-type" style="display: none">
+                            <option value="{{ room.section }}" selected="selected">{{ room.section }}</option>
+                        </select>
+
+                        <div class="card w-75 mt-3 border-danger bg-light" id="closed-room">
+                            <div class="card-body text-danger">
+                                <div class="d-flex flex-column align-items-center text-center">
+                                    Al momento la sala è chiusa, riapre alle {{ room.opening|time:"H:i" }}
+                                    <div class="mt-3">
+                                        <form name="search-field" method="GET" action="{% url 'rooms:room-search' %}">
+                                            <div class="form-group mb-2">
+                                                <label for="SectionInput"></label>
+                                                <select class="form-control" id="SectionInput" name="section-type" style="display: none">
+                                                    <option value="{{ room.section }}"
+                                                            selected="selected">{{ room.section }}</option>
+                                                </select>
+                                            </div>
+                                            <input type="submit" id="search-button" class="btn btn-danger"
+                                                   value="Torna alle sale">
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+
+                        <script>
+                            $(document).ready(function () {
+                                var close = document.getElementById('closed-room');
+                                var game = document.getElementById('game-div');
+                                if ({{time.0}} < {{ room.opening|time:"H"|add:"0" }} || {{ time.0 }} > {{ room.closing|time:"H"|add:"0" }} )
+                                {
+                                    console.log("La sala è chiusa ore");
+                                    close.style.display = "block";
+                                    game.style.display = "none";
+                                }
+                            else
+                                {
+                                    if (({{time.0}} === {{ room.opening|time:"H"|add:"0" }} && {{ time.1 }} < {{ room.opening|time:"i"|add:"0" }} ) || ({{ time.0 }} === {{ room.closing|time:"H"|add:"0" }} && {{ time.1 }} > {{ room.closing|time:"i"|add:"0" }} ))
+                                    {
+                                        console.log("Al momento la sala è chiusa minuti");
+                                        close.style.display = "block";
+                                        game.style.display = "none";
+                                    }
+                                else
+                                    {
+                                        console.log("Al momento la sala è aperta");
+                                        close.style.display = "none";
+                                        game.style.display = "block";
+                                    }
+                                }
+                            });
+
+
+                        </script>
+
+
                         {% if not has_room %}
                             {% if room.is_subscribable %}
                                 <div class="card w-50 mt-3 border-0 bg-light">
                                     <div class="card-body">
                                         <div class="d-flex flex-column align-items-center text-center">
-                                            Iscriviti alla stanza per poter giocare
+                                            Iscriviti alla sala per poter giocare
                                             <div class="mt-3">
                                                 <a class="btn btn-primary" href="{% url 'rooms:room-signup' room.id %}"
                                                    type="button">iscriviti</a>
@@ -94,11 +155,15 @@
                                 </div>
                             {% endif %}
                         {% else %}
+
+
+
                             {% if room.get_minimum_bet > player.saldo %}
                                 <div class="card w-50 mt-3 border-danger bg-light">
                                     <div class="card-body text-danger">
                                         <div class="d-flex flex-column align-items-center text-center">
-                                            Saldo insufficente per poter giocare, ricarica il saldo dalla pagina profilo
+                                            Saldo insufficente per poter giocare, ricarica il saldo dalla pagina
+                                            profilo
                                             <div class="mt-3">
                                                 <a class="btn btn-outline-danger"
                                                    href="{% url 'users:profile' user.id %}"
@@ -108,7 +173,7 @@
                                     </div>
                                 </div>
                             {% else %}
-                                <div class="card w-75 mt-3 border-info bg-light">
+                                <div class="card w-75 mt-3 border-info bg-light" id="game-div">
                                     <div class="card-body text-info">
                                         <div class="d-flex flex-column align-items-center text-center">
                                             <h4>Indovina il numero</h4>
@@ -139,7 +204,8 @@
                                                     <div class="mt-3">
                                                         <label for="numero-input"> Su che numero vuoi
                                                             scommettere?</label>
-                                                        <select id="numero-input" name="numero" class="form-control">
+                                                        <select id="numero-input" name="numero"
+                                                                class="form-control">
                                                         </select>
                                                     </div>
                                                 </div>
@@ -162,8 +228,8 @@
                                         </div>
                                     </div>
                                 </div>
-
                             {% endif %}
+
                         {% endif %}
                     </div>
                 </div>
@@ -172,7 +238,7 @@
     </div>
     <div style="height: 40px;"></div>
 
-    {% if has_room and room.get_minimum_bet < player.saldo %}
+    {% if has_room and room.get_minimum_bet <= player.saldo %}
         <script>
             function generateNumeroOptions(selectedRange) {
                 var numeroSelect = document.getElementById('numero-input');
@@ -211,7 +277,7 @@
             var random;
             var max = 10;
             var saldo_input = Number({{ player.saldo }});
-            saldo_input=Number((Math.round(saldo_input * 100) / 100).toFixed(2));
+            saldo_input = Number((Math.round(saldo_input * 100) / 100).toFixed(2));
             var betBtn = document.getElementById('bet-button');
 
             $(document).ready(function () {
@@ -226,9 +292,11 @@
             betBtn.addEventListener('click', function (event) {
                 var numeroSelect = parseInt(document.getElementById('numero-input').value);
                 var betSelect = document.getElementById('bet-input').value;
-                betSelect=(Math.round(betSelect * 100) / 100).toFixed(2);
+                betSelect = (Math.round(betSelect * 100) / 100).toFixed(2);
                 var risultatoLabel = document.getElementById("risultato-label");
                 var risultatoText = document.getElementById("risultato-text");
+                var saldo = document.getElementById('saldo-div');
+                var game = document.getElementById('game-div')
                 var amount;
                 var formUrl = $(this).data('form-url');
                 $("#updateSaldoForm").attr('action', formUrl);
@@ -236,18 +304,21 @@
                 risultatoText.textContent = "";
                 random = Math.floor(Math.random() * (max));
                 if (betSelect > saldo_input) {
+
                     event.preventDefault();
                     alert("Non hai abbastanza saldo per scommettere così tanto");
+
+
                 } else if (betSelect < {{ room.get_minimum_bet }} || betSelect === "") {
                     event.preventDefault();
                     alert("Puntata non valida. Il minimo da puntare è {{ room.get_minimum_bet }} €");
                 } else {
                     risultatoLabel.textContent = "È uscito il numero: " + random;
                     if (random === numeroSelect) {
-                        risultatoText.textContent += "Complimenti, hai vinto!";
-                        risultatoText.style.color = "green";
                         amount = Number((Math.round(mult * betSelect * 100) / 100).toFixed(2));
-                    } else{
+                        risultatoText.textContent += "Complimenti, hai vinto " + amount + "€!";
+                        risultatoText.style.color = "green";
+                    } else {
                         risultatoText.textContent += "Mi dispiace, hai perso!!";
                         risultatoText.style.color = "red";
                         amount = Number((Math.round(-1 * betSelect * 100) / 100).toFixed(2));
@@ -261,8 +332,8 @@
                 var updateSaldoURL = "{% url 'users:update_saldo' user.id %}";
                 var formData = new FormData();
 
-                saldo_input =Number((Math.round((saldo_input+amount) * 100) / 100).toFixed(2));
-                amount= Number((Math.round(amount * 100) / 100).toFixed(2));
+                saldo_input = Number((Math.round((saldo_input + amount) * 100) / 100).toFixed(2));
+                amount = Number((Math.round(amount * 100) / 100).toFixed(2));
                 formData.append('saldo', amount);  // Aggiungi il valore di amount a formData
                 fetch(updateSaldoURL, {
                     method: 'POST',

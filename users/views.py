@@ -7,7 +7,7 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, DetailView, ListView, UpdateView, DeleteView, FormView, TemplateView
 from .forms import PlayerUserCreationForm, CroupierUserCreationForm, UserUpdatePicForm
 
-from .models import BaseUser, PlayerUser, CroupierUser
+from .models import BaseUser, PlayerUser, CroupierUser, RoomPlayer
 from rooms.models import Room
 from rooms.forms import RoomCreationForm
 
@@ -80,9 +80,15 @@ def profile(request, pk):
         elif user and user.first().is_player:
             # Comportamento per l'utente base (player)
             player = PlayerUser.objects.get(user_id=user_request)
+            rooms_query = RoomPlayer.objects.filter(player__user_id=user.first().id)
+            rooms = []
+            for room in rooms_query:
+                rooms.append(Room.objects.get(id=room.room.id))
             # TODO stanze associate al profilo
+            print(rooms)
             booking_dict = {}
-            return render(request, 'users/player_profile.html', context={'player': player, 'form_pic': form_pic})
+            return render(request, 'users/player_profile.html',
+                          context={'player': player, 'form_pic': form_pic, 'rooms': rooms})
 
 
 def saldo_update(request, pk):
@@ -90,9 +96,6 @@ def saldo_update(request, pk):
     if request.method == 'POST':
         saldo = request.POST.get('saldo')
         saldo = float(saldo)
-        print("--------------------")
-        print(round(saldo, 2))
-
         player.saldo += float(round(saldo, 2))
         player.saldo = round(player.saldo, 2)
         print(player.saldo)
@@ -114,3 +117,17 @@ def pic_update(request, pk):
             form.save()
 
     return redirect('users:profile', pk)
+
+
+def room_player_delete(request, room_pk):
+    # TODO non elimina alcuna relazione
+    if request.method == "POST":
+        # room_player = get_object_or_404(RoomPlayer, room_id=room_pk, player__user_id=request.user.id)
+        # room_player = RoomPlayer.objects.get(room_id=room_pk, player__user_id=request.user.id)
+        player = get_object_or_404(PlayerUser, user_id=request.user.id)
+        room = get_object_or_404(Room, id=room_pk)
+        player.rooms.remove(room)
+        player.save()
+        room.seats_occupied -= 1
+        room.save()
+        return redirect("users:profile", request.user.id)

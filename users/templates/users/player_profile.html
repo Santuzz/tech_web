@@ -28,8 +28,92 @@
     <div class="card mb-3">
         <div class="card h-100">
             <div class="card-body">
-                <h6 class="d-flex align-items-center mb-3">Stanze a cui sei iscritto</h6>
-                {# TODO inserire le room a cui è iscritto l'utente #}
+                <h4 class="d-flex align-items-center mb-3">Stanze a cui sei iscritto</h4>
+                <hr>
+                {% for room in rooms %}
+                    {# TODO modificare tutta la visualizzazione #}
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <img src="{{ room.get_cover_pic_url }}" alt="" class="rounded-corner"
+                                 width="100" style="margin-left: 10px; margin-bottom: 10px;">
+                        </div>
+                        <div class="col-sm-5">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h6 class="mb-0">Section</h6>
+                                </div>
+                                <div class="col-sm-6 text-secondary"
+                                     style="margin-left: -30px;  margin-right: 10px;">
+                                    {{ room.section }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h6 class="mb-0">Nome stanza</h6>
+                                </div>
+                                <div class="col-sm-6 text-secondary"
+                                     style="margin-left: -30px; margin-right: 10px;">
+                                    {{ room.room_name }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h6 class="mb-0">Posti disponibili</h6>
+                                </div>
+                                <div class="col-sm-6 text-secondary"
+                                     style="margin-left: -30px;  margin-right: 10px;">
+                                    {{ room.seats_number }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4" style="margin-left: -15px">
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <h6 class="mb-0">Puntata minima</h6>
+                                </div>
+                                <div class="col-sm-4 text-secondary">
+                                    {{ room.minimum_bet }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <h6 class="mb-0">Orario di apertura</h6>
+                                </div>
+                                <div class="col-sm-4 text-secondary">
+                                    {{ room.opening|time:"H:i" }}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <h6 class="mb-0">Orario di chiusura</h6>
+                                </div>
+                                <div class="col-sm-4 text-secondary">
+                                    {{ room.closing|time:"H:i" }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <h6 class="mb-0">Posti occupati</h6>
+                                </div>
+                                <div class="col-sm-4 text-secondary">
+                                    {{ room.seats_occupied }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-1">
+                            <button type="button" class="delete-room-player bs-modal btn btn-danger"
+                                    data-form-url="{% url 'users:delete-room-player' room.id %}" style="margin-bottom: 20px">
+                                <i class="far fa-trash-alt"></i>
+                            </button>
+                            <br>
+                            <a class="btn btn-success" href="{% url 'rooms:room-overview' room.id %}" style="margin-left: -12px">
+                                gioca
+                            </a>
+                        </div>
+                    </div>
+                    <hr>
+                {% endfor %}
             </div>
         </div>
     </div>
@@ -60,6 +144,31 @@
             </div>
         </div>
     </div>
+
+     <!-- delete room association modal-->
+    <div class="modal fade" id="deleteRoomModal" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalTitle">Disiscrizione</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Sei sicuro di volerti disiscrivere dalla stanza?
+                </div>
+                <div class="modal-footer">
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Elimina</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block javascript %}
@@ -77,6 +186,12 @@
                     event.preventDefault();
                     alert("Il saldo inserito non è valido. Deve essere maggiore di zero");
                 }
+            });
+
+            $(".delete-room-player").click(function () {
+                var url= $(this).data("form-url");
+                $("#deleteRoomModal form").attr("action", url)
+                $("#deleteRoomModal").modal('show');
             });
         });
     </script>

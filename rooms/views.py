@@ -2,9 +2,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView
 
+from datetime import datetime
+import pytz
+
 from .models import Room, Section
 from .forms import RoomCreationForm
 from users.models import CroupierUser, BaseUser, PlayerUser, RoomPlayer
+from django.db.models import F
 
 
 class CreateRoom(CreateView):
@@ -72,6 +76,7 @@ def room_signup(request, room_id):
 
 
 def room_overview(request, pk):
+    current_time = []
     if request.method == 'GET':
         room_request = pk
         room = Room.objects.get(id=room_request)
@@ -80,26 +85,56 @@ def room_overview(request, pk):
         user_player = BaseUser.objects.get(username=request.user)
         player = PlayerUser.objects.get(user_id=user_player.id)
         has_room = player.rooms.filter(pk=room.id).exists()
+
+        utc_now = datetime.now(pytz.utc)
+        italy_tz = pytz.timezone('Europe/Rome')
+        now = utc_now.astimezone(italy_tz)
+
+        current_time.append(now.strftime("%H"))
+        current_time.append(now.strftime("%M"))
         return render(request, 'rooms/detail_room.html', context={'room': room,
                                                                   'croupier': user,
                                                                   'has_room': has_room,
-                                                                  'player': player})
+                                                                  'player': player,
+                                                                  'time': current_time})
 
 
 def search_room(request):
     if request.method == 'GET':
         section_type = request.GET.get('section-type')
-        room = Room.objects.filter(section__section_name=section_type).order_by('room_name')
+        seats_number = request.GET.get('seats-number')
+        minimum_bet = request.GET.get('minimum-bet')
+        opening = request.GET.get('opening-time')
+        opening_time = None
+        if opening is not "":
+            opening_time = datetime.strptime(opening, '%H:%M').time()
+        closing = request.GET.get('closing-time')
+        closing_time = None
+        if opening is not "":
+            closing_time = datetime.strptime(closing, '%H:%M').time()
+        seats_available = request.GET.get('seats-available')
+        rooms = Room.objects.filter(section__section_name=section_type).order_by('room_name')
+        if seats_number is not None and seats_number is not "":
+            rooms = rooms.filter(seats_number__lt=int(seats_number))
+        if minimum_bet is not None:
+            rooms = rooms.filter(minimum_bet=minimum_bet)
+        if opening_time is not None:
+            rooms = rooms.filter(opening__lte=opening_time)
+        if closing_time is not None:
+            rooms = rooms.filter(closing__gte=closing_time)
+        if seats_available is not None and seats_available == 'on':
+            rooms = rooms.filter(seats_occupied__lt=F('seats_number'))
+
         section_dict = Section.objects.values('id', 'section_name')
         section = [elemento['section_name'] for index, elemento in enumerate(section_dict)]
         room_dict = {}
-        for index, room_object in enumerate(room):
+        for index, room_object in enumerate(rooms):
             room_tmp = Room.objects.filter(section__section_name=section_type, id=room_object.id).values()
 
             if len(room_tmp) > 0:
                 room_dict[index] = room_tmp
 
-        if request.user.is_authenticated:
+        if request.user.is_authenticated and request.user.is_player:
             user = BaseUser.objects.get(username=request.user)
             player = PlayerUser.objects.get(user_id=user.id)
 

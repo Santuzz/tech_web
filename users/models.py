@@ -55,7 +55,7 @@ class BaseUser(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=50)
 
     profile_pic = models.ImageField(upload_to='profile_pics/', null=True, blank=True,
-                                    default='profile_pics/profile_no_pic.png')
+                                    default='profile_pics/profile_no_pic.jpg')
 
     objects = UserManager()
 
@@ -78,7 +78,7 @@ class BaseUser(AbstractBaseUser, PermissionsMixin):
         if self.profile_pic and hasattr(self.profile_pic, 'url'):
             return self.profile_pic.url
         else:
-            return '/static/img/profile_no_pic.png'
+            return 'profile_pics/profile_no_pic.jpg'
 
     def get_absolute_url(self):
         return reverse('user_mgmt:profile', kwargs={'pk': self.pk})
@@ -119,3 +119,6 @@ class RoomPlayer(models.Model):
 
     def __str__(self):
         return 'RP - {} - {}'.format(self.room_id, self.player_id)
+
+    class Meta:
+        unique_together = ('room', 'player')
