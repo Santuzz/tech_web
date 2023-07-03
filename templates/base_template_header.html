@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title> Santo's casino - {% block head_title %}{% endblock %}</title>
+    <title> Santo's games - {% block head_title %}{% endblock %}</title>
 
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
     <!-- FontAwesome CSS -->
@@ -28,7 +28,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark custom-navbar fixed-top">
     <a class="navbar-brand" href="{% url 'core:home' %}">
-        <i class="fas fa-dollar-sign"></i>anto's Casino
+        <i class="fas fa-dollar-sign"></i>anto's games
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main_nav" aria-expanded="false"
             aria-label="Toggle navigation">
@@ -68,7 +68,7 @@
     </div> <!-- navbar-collapse.// -->
 </nav>
 
-<div class="margin-from-navbar">
+<div class="margin-from-navbar"  style="margin-top: 100px">
     {% block content %}
 
     {% endblock %}

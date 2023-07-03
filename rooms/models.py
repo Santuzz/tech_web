@@ -11,12 +11,10 @@ from django.contrib.auth.models import User
 class Section(models.Model):
     section_name = models.CharField(max_length=50)
     TYPE = [
-        "Blackjack",
-        "Poker",
         "Roulette",
+        "memory",
         "Slot",
-        "Baccarat",
-        "Bingo"
+
     ]
 
     def __str__(self):

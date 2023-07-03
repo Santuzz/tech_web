@@ -19,7 +19,7 @@ from django.contrib import admin
 from django.urls import include, path
 from . import views
 from casino import settings
-from initcmds import init_db, erase_db
+#from initcmds import init_db, erase_db
 
 urlpatterns = [
                   path('user/', include('users.urls')),

@@ -57,12 +57,11 @@ def room_update(request, room_pk, croupier_pk):
 
 
 def room_delete(request, room_pk, croupier_pk):
-    room = get_object_or_404(Room, id=room_pk)
+    room = Room.objects.filter(id=room_pk)
     croupier = get_object_or_404(CroupierUser, user_id=croupier_pk)
     croupier.room = None
     croupier.save()
     room.delete()
-    room.save()
     return redirect('users:profile', croupier_pk)
 
 
@@ -116,7 +115,7 @@ def search_room(request):
         rooms = Room.objects.filter(section__section_name=section_type).order_by('room_name')
         if seats_number is not None and seats_number != "":
             rooms = rooms.filter(seats_number__lt=int(seats_number))
-        if minimum_bet is not None:
+        if minimum_bet is not None and minimum_bet != "":
             rooms = rooms.filter(minimum_bet=minimum_bet)
         if opening_time is not None:
             rooms = rooms.filter(opening__lte=opening_time)

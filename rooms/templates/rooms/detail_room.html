@@ -82,7 +82,8 @@
                                         <form name="search-field" method="GET" action="{% url 'rooms:room-search' %}">
                                             <div class="form-group mb-2">
                                                 <label for="SectionInput"></label>
-                                                <select class="form-control" id="SectionInput" name="section-type" style="display: none">
+                                                <select class="form-control" id="SectionInput" name="section-type"
+                                                        style="display: none">
                                                     <option value="{{ room.section }}"
                                                             selected="selected">{{ room.section }}</option>
                                                 </select>
@@ -96,6 +97,37 @@
                             </div>
                         </div>
                         <br>
+                        {% comment %}
+                    <script>
+                            $(document).ready(function () {
+                                var close = document.getElementById('closed-room');
+                                var game = document.getElementById('game-div');
+                                if ({{time.0}} < {{ room.opening|time:"H"|add:"0" }} || {{ time.0 }} > {{ room.closing|time:"H"|add:"0" }} )
+                                {
+                                    console.log("La sala è chiusa ore");
+                                    close.style.display = "block";
+                                    game.style.display = "none";
+                                }
+                            else
+                                {
+                                    if (({{time.0}} === {{ room.opening|time:"H"|add:"0" }} && {{ time.1 }} < {{ room.opening|time:"i"|add:"0" }} ) || ({{ time.0 }} === {{ room.closing|time:"H"|add:"0" }} && {{ time.1 }} > {{ room.closing|time:"i"|add:"0" }} ))
+                                    {
+                                        console.log("Al momento la sala è chiusa minuti");
+                                        close.style.display = "block";
+                                        game.style.display = "none";
+                                    }
+                                else
+                                    {
+                                        console.log("Al momento la sala è aperta");
+                                        close.style.display = "none";
+                                        game.style.display = "block";
+                                    }
+                                }
+                            });
+
+
+                        </script>
+                    {% endcomment %}
 
                         <script>
                             $(document).ready(function () {

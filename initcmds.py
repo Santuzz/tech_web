@@ -39,7 +39,7 @@ def erase_db():
     Section.objects.all().delete()
 
 
-def init_db():
+"""def init_db():
     section = [
         "Blackjack",
         "Poker",
@@ -174,4 +174,5 @@ def init_db():
                 random_index = random.randint(0, len(roomdict[k]) - 1)
                 r.cover_pic = roomdict[k][random_index]
         r.save()
+"""
 

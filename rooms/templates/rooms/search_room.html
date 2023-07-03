@@ -6,35 +6,7 @@
 
 
 {% block content %}
-    <div class="container w-100 top-div">
-        <div class="row d-flex">
-            <div class="mr-auto p-2">
-                <h3 class="text-capitalize">Sale popolari</h3>
-            </div>
-            <div class="p-2">
-                <div>
-                    <a class="btn minimize-button" data-toggle="collapse" href="#row-buttons" role="button"
-                       aria-expanded="false" aria-controls="collapseExample">
-                        <i class="fas fa-window-minimize"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-        {# TODO: aggiungere le sale più cercate #}
-        <div id="row-buttons" class="row collapse show">
-            <ul class="flex-container wrap">
-                {% for key, value in favorite.items %}
-                    {% for x in value %}
-                        <li class="search-btt-go-room">
-                            <a class="btn custom-btt-go-div-club text-capitalize" href="#{{ key }}"
-                               role="button">{{ x.room_name }}
-                            </a>
-                        </li>
-                    {% endfor %}
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
+
     <div class="container w-75">
         <form name="search-field" method="GET" action="{% url 'rooms:room-search' %}">
             <div class="row align-items-center justify-content-between">
@@ -63,6 +35,7 @@
                         <div class="col p-2">
                             <label class="text-white outlined-label" for="minimum-bet">Puntata minima</label>
                             <select id="minimum-bet" class="form-control" name="minimum-bet">
+                                <option value="">---</option>
                                 <option value="0.10">0.10</option>
                                 <option value="0.20">0.20</option>
                                 <option value="0.50">0.50</option>
@@ -177,14 +150,21 @@
                                         <div class="col-sm-12 d-flex align-items-center justify-content-center">
                                             <div class="p-2">
                                                 {% if user.is_authenticated %}
-                                                    <a class="custom-button-prenota custom-btn btn"
-                                                       href="{% url 'rooms:room-overview' rm.id %}">
-                                                        <i class="fas fa-dice"></i><span
-                                                            class="ml-2">Vai alla Sala</span>
-                                                    </a>
+                                                    {% if user.is_player %}
+                                                        <a class="custom-button-prenota custom-btn btn"
+                                                           href="{% url 'rooms:room-overview' rm.id %}">
+                                                            <i class="fas fa-dice"></i><span
+                                                                class="ml-2">Vai alla Sala</span>
+                                                        </a>
+                                                    {% else %}
+                                                        <a class="custom-button-prenota custom-btn btn" style="pointer-events: none"
+                                                           href="{% url 'rooms:room-overview' rm.id %}">
+                                                        <span class="ml-2">Solo i giocatori possono accedere alle stanze</span>
+                                                        </a>
+                                                    {% endif %}
                                                 {% else %}
                                                     <a class="custom-button-prenota custom-btn btn"
-                                                       href="{% url 'users:login' %}">
+                                                       href="{% url 'users:login_room' %}">
                                                         <i class="fas fa-dice"></i><span class="ml-2">Accedi per entrare nella sala</span>
                                                     </a>
                                                 {% endif %}

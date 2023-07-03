@@ -3,6 +3,7 @@ from django.urls import include, path
 
 from users import views
 from core import views as views_cr
+from rooms import urls
 
 app_name = 'users'
 
@@ -14,6 +15,14 @@ urlpatterns = [
     path('auth/signup/croupier/', views.CroupierSignUpView.as_view(), name='croupier-signup'),
     path('auth/login', auth_views.LoginView.as_view(), name='login'),
     path('auth/logout', auth_views.LogoutView.as_view(), name='logout'),
+
+    path('account/login/', auth_views.LoginView.as_view(
+        extra_context={
+
+            'next': 'rooms:room-overview room.id',
+
+        },
+    ), name='login_room'),
 
     path('<int:pk>/profile', views.profile, name="profile"),
     path('<int:pk>/aggiorna-saldo', views.saldo_update, name='update_saldo'),
