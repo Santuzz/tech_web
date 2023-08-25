@@ -181,13 +181,7 @@
 
     {% endif %}
 
-
-{% endblock %}
-
-
-{% block javascript %}
-
-    <script>
+<script>
         document.addEventListener("DOMContentLoaded", function () {
 
             var minimizeAllButton = document.getElementById("minimize-all-button");
@@ -196,7 +190,7 @@
             minimizeAllButton.addEventListener("click", function () {
                 //var isExpanded = minimizeAllButton.getAttribute("aria-expanded") === "true";
                 var isCompressed = minimizeAllButton.textContent === "Espandi Tutto"
-
+                console.log("here")
                 for (var i = 0; i < minimizeButtons.length; i++) {
                     var button = minimizeButtons[i];
 
@@ -218,9 +212,6 @@
             });
         });
 
-    </script>
-
-    <script>
         var urlParams = new URLSearchParams(window.location.search);
         var sectionType = urlParams.get('section-type');
         var seatsNumber = urlParams.get('seats-number');
@@ -236,4 +227,10 @@
         $('#closing-time').val(closingTime);
         $('#seats-available').prop('checked', seatsAvailable === 'on');
     </script>
+{% endblock %}
+
+
+{% block javascript %}
+
+
 {% endblock %}

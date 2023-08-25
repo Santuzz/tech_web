@@ -1,23 +1,19 @@
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
-
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
-from django.views.generic import CreateView, DetailView, ListView, UpdateView, DeleteView, FormView, TemplateView
+from django.views.generic import CreateView
 from django.contrib.auth.views import LoginView
 
 from .forms import PlayerUserCreationForm, CroupierUserCreationForm, UserUpdatePicForm
 
-from .models import BaseUser, PlayerUser, CroupierUser, RoomPlayer
+from .models import BaseUser, PlayerUser, CroupierUser, RoomPlayer, Giocata
 from rooms.models import Room
 from rooms.forms import RoomCreationForm
 
-from django.contrib.auth.decorators import login_required
-import os
-from urllib.parse import urlparse, parse_qs
+from django.db.models import Sum
 
-account_activation_token = PasswordResetTokenGenerator()
+from django.contrib.auth.decorators import login_required
 
 
 class SignUpView(CreateView):
@@ -61,16 +57,12 @@ class CroupierSignUpView(CreateView):
 class CustomLoginView(LoginView):
 
     def get_success_url(self):
-        # Utilizza il valore di room_id come necessario
-        url = reverse('rooms:room-overview', kwargs={'pk': self.kwargs.get('room_id')})
-        print(url)
         return reverse('rooms:room-overview', kwargs={'pk': self.kwargs.get('room_id')})
 
 
 @login_required
-# from FieldBooking.decorators import player_only
 def profile(request, pk):
-    if request.method == 'GET':
+    if request.method == 'GET' and request.user.id == pk:
         user_request = pk
         user = BaseUser.objects.filter(id=user_request)
         form_pic = UserUpdatePicForm(instance=user[0])
@@ -82,9 +74,15 @@ def profile(request, pk):
             if croupier.room:
                 room = Room.objects.get(id=croupier.room_id)
                 form = RoomCreationForm(instance=room)
-
+                giocate = Giocata.objects.filter(room=room.room_name).aggregate(Sum('importo'))
+                totale = giocate['importo__sum']
+                if totale is None:
+                    totale = 0
+                else:
+                    totale = round(totale, 2)
                 return render(request, 'users/croupier_profile.html',
-                              context={'croupier': croupier, 'room': room, 'form': form, 'form_pic': form_pic})
+                              context={'croupier': croupier, 'room': room, 'form': form, 'form_pic': form_pic,
+                                       'totale': totale})
 
             return render(request, 'users/croupier_profile.html',
                           context={'croupier': croupier, 'form_pic': form_pic})
@@ -93,12 +91,13 @@ def profile(request, pk):
             # Comportamento per l'utente base (player)
             player = PlayerUser.objects.get(user_id=user_request)
             rooms_query = RoomPlayer.objects.filter(player__user_id=user.first().id)
+            storico = Giocata.objects.filter(player__user_id=user.first().id).order_by("-timestamp")
             rooms = []
             for room in rooms_query:
                 rooms.append(Room.objects.get(id=room.room.id))
-            booking_dict = {}
             return render(request, 'users/player_profile.html',
-                          context={'player': player, 'form_pic': form_pic, 'rooms': rooms})
+                          context={'player': player, 'form_pic': form_pic, 'rooms': rooms, 'storico': storico})
+    return redirect("users:homepage")
 
 
 def saldo_update(request, pk):
@@ -106,12 +105,24 @@ def saldo_update(request, pk):
     if request.method == 'POST':
         saldo = request.POST.get('saldo')
         saldo = float(saldo)
-        player.saldo += float(round(saldo, 2))
-        player.saldo = round(player.saldo, 2)
-        print(player.saldo)
-        player.save()
+        ricarica = round(saldo, 2)
+        giocata = Giocata(player=player, importo=ricarica, is_ricarica=True)
+        giocata.save()
 
     return redirect('users:profile', pk)
+
+
+def saldo_bet(request, user_pk, room_pk):
+    player = get_object_or_404(PlayerUser, user_id=user_pk)
+    room = get_object_or_404(Room, id=room_pk)
+    if request.method == 'POST':
+        saldo = request.POST.get('saldo')
+        saldo = float(saldo)
+        ricarica = round(saldo, 2)
+        giocata = Giocata(player=player, importo=ricarica, is_ricarica=False, room=room.room_name)
+        giocata.save()
+
+    return redirect('rooms:room-overview', room_pk)
 
 
 def pic_update(request, pk):

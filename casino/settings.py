@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap4',
     'pytz',
+    'mathfilters',
+    'django_extensions',
 
 ]
 
@@ -117,7 +119,7 @@ LOGOUT_REDIRECT_URL = 'core:home'
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Rome'
 
 USE_I18N = True
 

@@ -1,7 +1,44 @@
 {% extends 'users/profile.html' %}
+{% load mathfilters %}
 {% load crispy_forms_tags %}
 {% load static %}
 {% block head_title %}Profilo utente{% endblock %}
+{% block storico %}
+    <div class="card" style="margin-top: 20px; align-content: start">
+        <div class="card-header">
+            Storico saldo
+        </div>
+        <div class="card-body">
+            <ul class="list-group list-group-flush storico">
+                {% for giocata in storico %}
+                    {% if giocata.is_ricarica %}
+                        <li class="list-group-item li-ricarica">+ {{ giocata.importo }}
+                            <span class="testo-nero">{{ giocata.timestamp|date:"d/m/y" }} <br> {{ giocata.timestamp|time:"H:i:s" }}</span>
+                            <br>
+                            {{ giocata.room }}
+                        </li>
+                    {% else %}
+                        {% if giocata.importo >= 0 %}
+                            <li class="list-group-item li-verde">+ {{ giocata.importo }}
+                                <span class="testo-nero">{{ giocata.timestamp|date:"d/m/y" }} <br> {{ giocata.timestamp|time:"H:i:s" }}</span>
+                                <br>
+                                {{ giocata.room }}
+                            </li>
+                        {% else %}
+                            <li class="list-group-item li-rosso">- {{ giocata.importo |abs }}
+                                <span class="testo-nero">{{ giocata.timestamp|date:"d/m/y" }} <br> {{ giocata.timestamp|time:"H:i:s" }}</span>
+                                <br>
+                                {{ giocata.room }}
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+
+
+            </ul>
+        </div>
+    </div>
+{% endblock %}
 
 {% block saldo %}
     <hr>
@@ -45,7 +82,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-sm-6">
-                                    <h6 class="mb-0">Nome stanza</h6>
+                                    <h6 class="mb-0">Nome sala</h6>
                                 </div>
                                 <div class="col-sm-6 text-secondary"
                                      style="margin-left: -30px; margin-right: 10px;">
@@ -99,11 +136,13 @@
                         </div>
                         <div class="col-sm-1">
                             <button type="button" class="delete-room-player bs-modal btn btn-danger"
-                                    data-form-url="{% url 'users:delete-room-player' room.id %}" style="margin-bottom: 20px">
+                                    data-form-url="{% url 'users:delete-room-player' room.id %}"
+                                    style="margin-bottom: 20px">
                                 <i class="far fa-trash-alt"></i>
                             </button>
                             <br>
-                            <a class="btn btn-success" href="{% url 'rooms:room-overview' room.id %}" style="margin-left: -12px">
+                            <a class="btn btn-success" href="{% url 'rooms:room-overview' room.id %}"
+                               style="margin-left: -12px">
                                 gioca
                             </a>
                         </div>
@@ -141,7 +180,7 @@
         </div>
     </div>
 
-     <!-- delete room association modal-->
+    <!-- delete room association modal-->
     <div class="modal fade" id="deleteRoomModal" tabindex="-1" role="dialog"
          aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -153,7 +192,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    Sei sicuro di volerti disiscrivere dalla stanza?
+                    Sei sicuro di volerti disiscrivere dalla sala?
                 </div>
                 <div class="modal-footer">
                     <form action="" method="POST">
@@ -183,7 +222,7 @@
             });
 
             $(".delete-room-player").click(function () {
-                var url= $(this).data("form-url");
+                var url = $(this).data("form-url");
                 $("#deleteRoomModal form").attr("action", url)
                 $("#deleteRoomModal").modal('show');
             });

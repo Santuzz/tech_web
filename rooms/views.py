@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView
 
-
 from datetime import datetime
 import pytz
 
@@ -30,7 +29,6 @@ class CreateRoom(CreateView):
             context['room'] = False
         else:
             context['room'] = True
-        print(context['room'])
         return context
 
     def form_valid(self, form):
@@ -47,6 +45,7 @@ def room_update(request, room_pk, croupier_pk):
     room = get_object_or_404(Room, id=room_pk)
     if request.method == 'POST':
         form = RoomCreationForm(request.POST, request.FILES, instance=room)
+        print(request.FILES)
         if form.is_valid():
             if not room.cover_pic:
                 room.cover_pic = "room_thumbnail/room_no_thumb.png"
@@ -68,7 +67,8 @@ def room_delete(request, room_pk, croupier_pk):
 
 def room_signup(request, room_id):
     room = Room.objects.get(id=room_id)
-    user_player = BaseUser.objects.get(username=request.user)
+    #user_player = BaseUser.objects.get(username=request.user)
+    user_player = BaseUser.objects.get(username=request.user.username)
     player = PlayerUser.objects.get(user_id=user_player.id)
     room_player = RoomPlayer.objects.create(room=room, player=player)  # Crea un nuovo oggetto RoomPlayer
     room_player.save()
@@ -82,20 +82,26 @@ def room_overview(request, pk):
         room = Room.objects.get(id=room_request)
         croupier = CroupierUser.objects.get(room_id=room.id)
         user = BaseUser.objects.get(id=croupier.user_id)
-        user_player = BaseUser.objects.get(username=request.user)
-        player = PlayerUser.objects.get(user_id=user_player.id)
-        has_room = player.rooms.filter(pk=room.id).exists()
-
+        print(request.user)
+        #user_player = BaseUser.objects.get(username=request.user)
+        user_player = BaseUser.objects.get(id=request.user.id)
         utc_now = datetime.now(pytz.utc)
         italy_tz = pytz.timezone('Europe/Rome')
         now = utc_now.astimezone(italy_tz)
 
         current_time.append(now.strftime("%H"))
         current_time.append(now.strftime("%M"))
+        if request.user.is_player:
+            player = PlayerUser.objects.get(user_id=user_player.id)
+            has_room = player.rooms.filter(pk=room.id).exists()
+            return render(request, 'rooms/detail_room.html', context={'room': room,
+                                                                      'croupier': user,
+                                                                      'has_room': has_room,
+                                                                      'player': player,
+                                                                      'time': current_time})
         return render(request, 'rooms/detail_room.html', context={'room': room,
                                                                   'croupier': user,
-                                                                  'has_room': has_room,
-                                                                  'player': player,
+                                                                  'has_room': False,
                                                                   'time': current_time})
 
 
@@ -135,7 +141,7 @@ def search_room(request):
                 room_dict[index] = room_tmp
 
         if request.user.is_authenticated and request.user.is_player:
-            user = BaseUser.objects.get(username=request.user)
+            user = BaseUser.objects.get(username=request.user.username)
             player = PlayerUser.objects.get(user_id=user.id)
 
             return render(request, 'rooms/search_room.html', context={'room': room_dict,

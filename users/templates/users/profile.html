@@ -23,6 +23,8 @@
                             </div>
                         </div>
                     </div>
+                    {% block storico %}
+                    {% endblock %}
                 </div>
                 <div class="col-md-8">
                     <div class="card mb-3">
@@ -89,7 +91,9 @@
                         {% csrf_token %}
                         <input type="hidden" name="next" value="{{ next }}">
                         {% crispy form_pic %}
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal" style="margin-top: 5px">Chiudi</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" style="margin-top: 5px">
+                            Chiudi
+                        </button>
                     </form>
                 </div>
             </div>

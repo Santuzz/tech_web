@@ -4,14 +4,14 @@
 {% load crispy_forms_tags %}
 {% block head_title %}Profilo croupier{% endblock %}
 
-    {% block profile %}
-        {% if croupier.room %}
+{% block profile %}
+    {% if croupier.room %}
         <div class="card mb-3 border-0 bg-light">
             <div class="card h-100 rounded shadow">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-sm-9">
-                            <h4 class="d-flex align-items-center mb-3">La tua stanza</h4>
+                            <h4 class="d-flex align-items-center mb-3">La tua sala</h4>
                         </div>
                         <div class="col-sm-1">
 
@@ -36,85 +36,99 @@
                         <img src="{{ room.get_cover_pic_url }}" alt="" class="rounded-corner"
                              width="100" style="margin-left: 10px; margin-bottom: 10px;">
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-10">
                         <div class="row">
-                            <div class="col-sm-6">
-                                <h6 class="mb-0">Section</h6>
+                            <div class="col-sm-7">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <h6 class="mb-0">Section</h6>
+                                    </div>
+                                    <div class="col-sm-6 text-secondary"
+                                         style="margin-left: -45px;  margin-right: 35px;">
+                                        {{ room.section }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <h6 class="mb-0">Nome sala</h6>
+                                    </div>
+                                    <div class="col-sm-6 text-secondary"
+                                         style="margin-left: -45px; margin-right: 35px;">
+                                        {{ room.room_name }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <h6 class="mb-0">Posti disponibili</h6>
+                                    </div>
+                                    <div class="col-sm-6 text-secondary"
+                                         style="margin-left: -45px;  margin-right: 35px;">
+                                        {{ room.seats_number }}
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-sm-6 text-secondary"
-                                 style="margin-left: -45px;  margin-right: 35px;">
-                                {{ room.section }}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <h6 class="mb-0">Nome stanza</h6>
-                            </div>
-                            <div class="col-sm-6 text-secondary"
-                                 style="margin-left: -45px; margin-right: 35px;">
-                                {{ room.room_name }}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <h6 class="mb-0">Posti disponibili</h6>
-                            </div>
-                            <div class="col-sm-6 text-secondary"
-                                 style="margin-left: -45px;  margin-right: 35px;">
-                                {{ room.seats_number }}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-4" style="margin-left: -15px">
-                        <div class="row">
-                            <div class="col-sm-8">
-                                <h6 class="mb-0">Puntata minima</h6>
-                            </div>
-                            <div class="col-sm-4 text-secondary">
-                                {{ room.minimum_bet }}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-8">
-                                <h6 class="mb-0">Orario di apertura</h6>
-                            </div>
-                            <div class="col-sm-4 text-secondary">
-                                {{ room.opening|time:"H:i" }}
-                            </div>
-                        </div>
+                            <div class="col-sm-5" style="margin-left: -15px">
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <h6 class="mb-0">Puntata minima</h6>
+                                    </div>
+                                    <div class="col-sm-4 text-secondary">
+                                        {{ room.minimum_bet }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <h6 class="mb-0">Orario di apertura</h6>
+                                    </div>
+                                    <div class="col-sm-4 text-secondary">
+                                        {{ room.opening|time:"H:i" }}
+                                    </div>
+                                </div>
 
-                        <div class="row">
-                            <div class="col-sm-8">
-                                <h6 class="mb-0">Orario di chiusura</h6>
-                            </div>
-                            <div class="col-sm-4 text-secondary">
-                                {{ room.closing|time:"H:i" }}
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <h6 class="mb-0">Orario di chiusura</h6>
+                                    </div>
+                                    <div class="col-sm-4 text-secondary">
+                                        {{ room.closing|time:"H:i" }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <h6 class="mb-0">Posti occupati</h6>
+                                    </div>
+                                    <div class="col-sm-4 text-secondary">
+                                        {{ room.seats_occupied }}
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                        <hr>
                         <div class="row">
-                            <div class="col-sm-8">
-                                <h6 class="mb-0">Posti occupati</h6>
+                            <div class="col-sm-4">
+                                <h4 class="mb-0">Incasso totale</h4>
                             </div>
-                            <div class="col-sm-4 text-secondary">
-                                {{ room.seats_occupied }}
-                            </div>
+                            <h4 class="col-sm-3 text-secondary">
+                                        {{ totale }}
+                                    </h4>
                         </div>
                     </div>
                 </div>
+                <hr>
             </div>
         </div>
 
-        {% endif %}
+    {% endif %}
 
-    {% endblock %}
+{% endblock %}
 
-    {% block modal %}
-        {% if croupier.room %}
+{% block modal %}
+    {% if croupier.room %}
         <div id="updateRoomModal" class="modal fade" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Modifica stanza</h5>
+                        <h5 class="modal-title">Modifica sala</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -141,13 +155,13 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="deleteModalTitle">Elimina stanza</h5>
+                        <h5 class="modal-title" id="deleteModalTitle">Elimina sala</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        Sei sicuro di voler eliminare la stanza?
+                        Sei sicuro di voler eliminare la sala?
                     </div>
                     <div class="modal-footer">
                         <form action="{% url 'rooms:delete-room' room.id user.id %}" method="POST">
@@ -159,11 +173,11 @@
                 </div>
             </div>
         </div>
-        {% endif %}
-    {% endblock %}
+    {% endif %}
+{% endblock %}
 
-    {% block javascript %}
-        {% if croupier.room %}
+{% block javascript %}
+    {% if croupier.room %}
         <script>
 
             $(document).ready(function () {
@@ -186,7 +200,7 @@
 
                     if (!re_name.test(name)) {
                         event.preventDefault();
-                        alert("Il nome della stanza inserito non è valido.\nNon deve contenere caratteri speciali");
+                        alert("Il nome della sala inserito non è valido.\nNon deve contenere caratteri speciali");
                     }
                     if (seats > 5000 || seats < 1) {
                         event.preventDefault();
@@ -207,8 +221,8 @@
             });
 
         </script>
-        {% endif %}
-    {% endblock %}
+    {% endif %}
+{% endblock %}
 
 
 

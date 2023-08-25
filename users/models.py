@@ -1,11 +1,11 @@
-import os
-
 from django.urls import reverse
-from django.core.mail import send_mail
-
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Group, Permission
 from django.db import models
 from rooms.models import Room
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
+from django.utils import timezone
+from django.db import connection
 
 
 class UserManager(BaseUserManager):
@@ -18,11 +18,12 @@ class UserManager(BaseUserManager):
         email = self.normalize_email(email)
         user = self.model(email=email, username=username, **extra_fields)
         user.set_password(password)
-        if user.is_player:
-            PlayerUser.objects.get_or_create(user=user)
-        elif user.is_croupier:
-            CroupierUser.objects.get_or_create(user=user)
-        user.save(using=self._db)
+        if not connection.settings_dict['TEST']:  # Skip related object creation in test environment
+            if user.is_player:
+                PlayerUser.objects.get_or_create(user=user)
+            elif user.is_croupier:
+                CroupierUser.objects.get_or_create(user=user)
+            user.save(using=self._db)
         return user
 
     def create_superuser(self, email, username, password, **extra_fields):
@@ -43,8 +44,8 @@ class UserManager(BaseUserManager):
 class BaseUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=30, unique=True)
-    date_joined = models.DateTimeField(verbose_name='date joined', auto_now_add=True)
-    last_login = models.DateTimeField(verbose_name='last login', auto_now=True)
+    date_joined = models.DateTimeField(verbose_name='date joined', default=timezone.now)
+    last_login = models.DateTimeField(verbose_name='last login', default=timezone.now)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -83,6 +84,9 @@ class BaseUser(AbstractBaseUser, PermissionsMixin):
     def get_absolute_url(self):
         return reverse('user_mgmt:profile', kwargs={'pk': self.pk})
 
+    def __str__(self):
+        return 'USER - {} - {}'.format(self.id, self.username)
+
 
 class PlayerUser(models.Model):
     user = models.OneToOneField(BaseUser, on_delete=models.CASCADE, primary_key=True, related_name="player")
@@ -93,12 +97,45 @@ class PlayerUser(models.Model):
         return 'PLAYER - {} - {}'.format(self.user.id, self.user.username)
 
 
+@receiver(post_delete, sender=PlayerUser)
+def delete_user(sender, instance, using, **kwargs):
+    instance.user.delete()
+
+
+class Giocata(models.Model):
+    player = models.ForeignKey('PlayerUser', on_delete=models.CASCADE, related_name='giocate')
+    timestamp = models.DateTimeField(default=timezone.now)
+    importo = models.FloatField()
+    room = models.CharField(default="", max_length=255)
+    is_ricarica = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        saldo = self.player.saldo + self.importo
+        self.player.saldo = round(saldo, 2)
+        self.player.save()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f'Giocata - Player: {self.player.user_id}, Timestamp: {self.timestamp}, Importo: {self.importo}'
+
+    class Meta:
+        verbose_name = 'giocata'
+        verbose_name_plural = 'giocate'
+
+
 class CroupierUser(models.Model):
     user = models.OneToOneField(BaseUser, on_delete=models.CASCADE, primary_key=True, related_name="croupier")
     room = models.OneToOneField(Room, on_delete=models.SET_NULL, related_name='croupier_room', null=True, blank=True)
 
     def __str__(self):
         return 'CROUPIER - {} - {}'.format(self.user.id, self.user.username)
+
+
+@receiver(post_delete, sender=CroupierUser)
+def delete_user(sender, instance, using, **kwargs):
+    instance.user.delete()
+    if instance.room:
+        instance.room.delete()
 
 
 class RoomPlayer(models.Model):

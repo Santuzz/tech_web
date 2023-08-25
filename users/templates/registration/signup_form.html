@@ -7,19 +7,11 @@
         <div class="rounded p-3 shadow signup-box">
             {% if user_type == 'player' %}
                 <h1 class="text-center">Crea il tuo nuovo account utente</h1>
-                <h4>Registrandoti, potrai usufruire dei seguenti servizi</h4>
-                <ul>
-                    <li>Accedere alle sale</li>
-                    <li>Gestire il profilo, potendo caricare e prelevare soldi dal saldo</li>
-                    <li>Iniziare a divertirti al casinò più pazzo del mondo</li>
-                </ul>
+                <h4>Registrandoti, potrai accedere alle sale e iniziare a divertirti giocando</h4>
+
             {% else %}
                 <h1 class="text-center">Crea un nuovo account croupier </h1>
-                <h4>Registrandoti potrai usufruire dei seguenti servizi</h4>
-                <ul>
-                    <li>Creare e gestire la tua sala</li>
-                    <li>Spennare fino all'ultimo centesimo a chi tenta la fortuna</li>
-                </ul>
+                <h4>Registrandoti potrai creare e gestire la tua sala</h4>
             {% endif %}
             <form method="post" novalidate>
                 {% csrf_token %}
@@ -32,41 +24,24 @@
 
     <script>
         function addImageOnChange() {
-            // Seleziona l'input file
             var input = $("#id_profile_pic");
-
-            // Aggiungi un gestore per l'evento change dell'input file
             input.on("change", function () {
-                // Seleziona il div in cui visualizzare l'immagine
                 var displayDiv = $("#display-image");
-
-                // Rimuovi eventuali immagini presenti nel div
                 displayDiv.empty();
-
-                // Leggi il file selezionato
                 var file = this.files[0];
-
-                // Crea un oggetto URL per l'immagine selezionata
                 var imageUrl = URL.createObjectURL(file);
-
-                // Crea un elemento immagine
                 var image = $("<img>");
                 image.attr("src", imageUrl);
                 image.css("max-width", "100px");
                 image.css("max-height", "100px");
-
-                // Aggiungi l'immagine al div solo se è presente un'immagine selezionata
                 if (file) {
                     displayDiv.append(image);
                 }
             });
         }
-
-
         $(document).ready(function () {
             addImageOnChange();
         });
-
     </script>
 
 

@@ -500,7 +500,6 @@ div.div-under-club {
 }
 
 
-
 .profile-work {
     padding: 14%;
     margin-top: -15%;
@@ -628,7 +627,7 @@ div.div-under-club {
 }
 
 .search-div-club {
-    background: linear-gradient(to left top,#E0E0E0, #306088) fixed;
+    background: linear-gradient(to left top, #E0E0E0, #306088) fixed;
     border-radius: 12px;
 }
 
@@ -758,40 +757,42 @@ div.div-under-club {
 }
 
 
-
 .outlined-label {
-  text-shadow: 0 0 3px rgba(0, 0, 0, 1.0);
+    text-shadow: 0 0 3px rgba(0, 0, 0, 1.0);
     font-size: 20px;
 }
 
 .room-thumbnail-title {
-    text-align: center; font-size: 27px; font-weight: bolder; text-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
+    text-align: center;
+    font-size: 27px;
+    font-weight: bolder;
+    text-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
 }
 
 .btn-player {
-  color: #fff;
-  background-color: #91afb6;
-  border-color: #91afb6;
+    color: #fff;
+    background-color: #91afb6;
+    border-color: #91afb6;
 }
 
 .btn-player:hover,
 .btn-player:active {
-  color: #fff;
-  background-color: #608993;
-  border-color: #608993;
+    color: #fff;
+    background-color: #608993;
+    border-color: #608993;
 }
 
 .btn-croupier {
-  color: #fff;
-  background-color: #8980a5;
-  border-color: #8980a5;
+    color: #fff;
+    background-color: #8980a5;
+    border-color: #8980a5;
 }
 
 .btn-croupier:hover,
 .btn-croupier:active {
-  color: #fff;
-  background-color: #66598B;
-  border-color: #66598B;
+    color: #fff;
+    background-color: #66598B;
+    border-color: #66598B;
 }
 
 .custom-box {
@@ -806,12 +807,34 @@ div.div-under-club {
 }
 
 .rounded-corner {
-  border-radius: 10px; /* Imposta il raggio di curvatura degli angoli */
+    border-radius: 10px; /* Imposta il raggio di curvatura degli angoli */
 }
 
-#display-image{
-  width: 100px;
-  height: 100px;
-  background-position: center;
-  background-size: cover;
+#display-image {
+    width: 100px;
+    height: 100px;
+    background-position: center;
+    background-size: cover;
+}
+
+.storico {
+    max-height: 500px;
+    overflow-y: auto;
+    border: 2px solid black;
+    border-radius: 5px;
+}
+
+.li-verde {
+    background-color: #eaf7ea; /* Sfondo verde chiaro */
+    color: green; /* Colore del testo verde */
+}
+
+.li-rosso {
+    background-color: #f9eaea; /* Sfondo rosato */
+    color: darkred; /* Colore del testo rosso scuro */
+}
+
+.testo-nero {
+    color: black; /* Colore del testo nero */
+    float: right;
 }

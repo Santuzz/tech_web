@@ -5,6 +5,9 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
 from django.urls import reverse
 
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
+
 from django.contrib.auth.models import User
 
 
@@ -19,6 +22,13 @@ class Section(models.Model):
 
     def __str__(self):
         return self.section_name
+
+
+@receiver(post_delete, sender=Section)
+def delete_user(sender, instance, using, **kwargs):
+    rooms = Room.objects.filter(section__section_name=instance.section_name)
+    for room in rooms:
+        room.delete()
 
 
 class Room(models.Model):
@@ -43,29 +53,20 @@ class Room(models.Model):
     closing = models.TimeField()
     seats_occupied = models.IntegerField(default=0)
 
-    cover_pic = models.ImageField(upload_to='icon_1/', blank=True, default='room_thumbnail/room_no_thumb.png')
+    cover_pic = models.ImageField(upload_to='room_thumbnail/', blank=True, default='room_thumbnail/room_no_thumb.png')
 
     class Meta:
         verbose_name_plural = 'Rooms'
         ordering = ['room_name']
 
     def save(self, *args, **kwargs):
-
-        try:
-            old_instance = Room.objects.filter(id=self.id)
-            if old_instance[0].cover_pic:
-                try:
-                    if old_instance and old_instance[0].cover_pic.name != self.cover_pic.name:
-                        os.remove(old_instance[0].cover_pic.path)
-                except:
-                    print("ROOM - Errore durante eliminazione foto precendente")
-        except:
-            pass
         super().save(*args, **kwargs)
 
     def get_cover_pic_url(self):
-        if hasattr(self.cover_pic, 'url'):
+        if self.cover_pic and hasattr(self.cover_pic, 'url'):
             return self.cover_pic.url
+        else:
+            return 'room_thumbnail/room_no_thumb.png'
 
     def get_absolute_url(self):
         return reverse('rooms:room-overview', kwargs={'pk': self.pk})

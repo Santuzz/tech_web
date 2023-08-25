@@ -156,9 +156,8 @@
 
 
                         </script>
-
-
-                        {% if not has_room %}
+                    {% if player %}
+                        {% if not has_room%}
                             {% if room.is_subscribable %}
                                 <div class="card w-50 mt-3 border-0 bg-light">
                                     <div class="card-body">
@@ -188,7 +187,7 @@
 
 
 
-                            {% if room.get_minimum_bet > player.saldo %}
+                            {% if room.get_minimum_bet > player.saldo%}
                                 <div class="card w-50 mt-3 border-danger bg-light">
                                     <div class="card-body text-danger">
                                         <div class="d-flex flex-column align-items-center text-center">
@@ -243,7 +242,7 @@
                                                 <div class="col-md-12">
                                                     <div class="d-flex justify-content-center mt-3">
                                                         <button type="submit" class="btn btn-info" id="bet-button"
-                                                                data-form-url="{% url 'users:update_saldo' user.id %}">
+                                                                data-form-url="{% url 'users:bet_saldo' user.id room.id %}">
                                                             Scommetti
                                                         </button>
                                                     </div>
@@ -261,6 +260,16 @@
                             {% endif %}
 
                         {% endif %}
+                    {% else %}
+                        <div class="card w-50 mt-3 border-danger bg-light">
+                                    <div class="card-body text-danger">
+                                        <div class="d-flex flex-column align-items-center text-center">
+                                            Solo gli utenti possono giocare
+
+                                        </div>
+                                    </div>
+                                </div>
+                    {% endif %}
                     </div>
                 </div>
             </div>
@@ -359,12 +368,12 @@
             });
 
             function updateSaldo(amount) {
-                var updateSaldoURL = "{% url 'users:update_saldo' user.id %}";
+                var updateSaldoURL = "{% url 'users:bet_saldo' user.id room.id%}";
                 var formData = new FormData();
 
                 saldo_input = Number((Math.round((saldo_input + amount) * 100) / 100).toFixed(2));
                 amount = Number((Math.round(amount * 100) / 100).toFixed(2));
-                formData.append('saldo', amount);  // Aggiungi il valore di amount a formData
+                formData.append('saldo', amount);
                 fetch(updateSaldoURL, {
                     method: 'POST',
                     headers: {
@@ -375,7 +384,6 @@
                     .then(function (response) {
                         if (response.ok) {
                             // Il saldo è stato aggiornato con successo
-                            // Puoi eseguire le operazioni aggiuntive necessarie qui
                             console.log("Saldo aggiornato con successo");
                             document.getElementById("saldo-input").textContent = saldo_input;
                         } else {

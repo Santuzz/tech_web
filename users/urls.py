@@ -13,14 +13,15 @@ urlpatterns = [
     path('auth/signup/', views.SignUpView.as_view(), name='signup'),
     path('auth/signup/player/', views.PlayerSignUpView.as_view(), name='player-signup'),
     path('auth/signup/croupier/', views.CroupierSignUpView.as_view(), name='croupier-signup'),
-    path('auth/login', auth_views.LoginView.as_view(), name='login'),
-    path('auth/logout', auth_views.LogoutView.as_view(), name='logout'),
+    path('auth/login/', auth_views.LoginView.as_view(), name='login'),
+    path('auth/logout/', auth_views.LogoutView.as_view(), name='logout'),
 
-    path('account/login/<int:room_id>', views.CustomLoginView.as_view(), name='login_room'),
+    path('account/login/<int:room_id>/', views.CustomLoginView.as_view(), name='login_room'),
 
-    path('<int:pk>/profile', views.profile, name="profile"),
-    path('<int:pk>/aggiorna-saldo', views.saldo_update, name='update_saldo'),
-    path('<int:pk>/update-profile-pic', views.pic_update, name='update-pic'),
+    path('<int:pk>/profile/', views.profile, name="profile"),
+    path('<int:pk>/aggiorna-saldo/', views.saldo_update, name='update_saldo'),
+    path('<int:user_pk>/<int:room_pk>/aggiorna-saldo/', views.saldo_bet, name='bet_saldo'),
+    path('<int:pk>/update-profile-pic/', views.pic_update, name='update-pic'),
 
-    path('<int:room_pk>/delete-room-player', views.room_player_delete, name="delete-room-player"),
+    path('<int:room_pk>/delete-room-player/', views.room_player_delete, name="delete-room-player"),
 ]
