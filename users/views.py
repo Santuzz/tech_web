@@ -88,7 +88,7 @@ def profile(request, pk):
                           context={'croupier': croupier, 'form_pic': form_pic})
 
         elif user and user.first().is_player:
-            # Comportamento per l'utente base (player)
+            # Comportamento per il player
             player = PlayerUser.objects.get(user_id=user_request)
             rooms_query = RoomPlayer.objects.filter(player__user_id=user.first().id)
             storico = Giocata.objects.filter(player__user_id=user.first().id).order_by("-timestamp")
@@ -141,8 +141,6 @@ def pic_update(request, pk):
 
 def room_player_delete(request, room_pk):
     if request.method == "POST":
-        # room_player = get_object_or_404(RoomPlayer, room_id=room_pk, player__user_id=request.user.id)
-        # room_player = RoomPlayer.objects.get(room_id=room_pk, player__user_id=request.user.id)
         player = get_object_or_404(PlayerUser, user_id=request.user.id)
         room = get_object_or_404(Room, id=room_pk)
         player.rooms.remove(room)

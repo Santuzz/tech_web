@@ -67,7 +67,6 @@ def room_delete(request, room_pk, croupier_pk):
 
 def room_signup(request, room_id):
     room = Room.objects.get(id=room_id)
-    #user_player = BaseUser.objects.get(username=request.user)
     user_player = BaseUser.objects.get(username=request.user.username)
     player = PlayerUser.objects.get(user_id=user_player.id)
     room_player = RoomPlayer.objects.create(room=room, player=player)  # Crea un nuovo oggetto RoomPlayer
@@ -83,7 +82,6 @@ def room_overview(request, pk):
         croupier = CroupierUser.objects.get(room_id=room.id)
         user = BaseUser.objects.get(id=croupier.user_id)
         print(request.user)
-        #user_player = BaseUser.objects.get(username=request.user)
         user_player = BaseUser.objects.get(id=request.user.id)
         utc_now = datetime.now(pytz.utc)
         italy_tz = pytz.timezone('Europe/Rome')

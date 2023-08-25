@@ -35,7 +35,6 @@ def get_valid_upload_paths(count):
 
 def erase_db():
     print("cancello il DB")
-    # Room.objects.all().delete()
     Section.objects.all().delete()
     BaseUser.objects.all().delete()
 

@@ -13,6 +13,8 @@ I comandi principali per far funzionare correttemente il sistema ed installare i
   pip install django-crispy-forms
   pip install asgiref
   pip install bootstrap4
+  pip install django-mathfilters
+  pip install django-extensions
 ```
   
 Per avviare il server utilizzare il comando

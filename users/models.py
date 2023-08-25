@@ -18,7 +18,7 @@ class UserManager(BaseUserManager):
         email = self.normalize_email(email)
         user = self.model(email=email, username=username, **extra_fields)
         user.set_password(password)
-        if not connection.settings_dict['TEST']:  # Skip related object creation in test environment
+        if not connection.settings_dict['TEST']:
             if user.is_player:
                 PlayerUser.objects.get_or_create(user=user)
             elif user.is_croupier:
@@ -144,14 +144,14 @@ class RoomPlayer(models.Model):
 
     def save(self, *args, **kwargs):
         if self.room.seats_occupied < self.room.seats_number:
-            self.room.seats_occupied = self.room.room_player.count()  # Update seats_occupied when saving
-            self.room.save()  # Save the room object
+            self.room.seats_occupied = self.room.room_player.count()
+            self.room.save()
 
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        self.room.seats_occupied = self.room.room_player.count() - 1  # Update seats_occupied when deleting
-        self.room.save()  # Save the room object
+        self.room.seats_occupied = self.room.room_player.count() - 1
+        self.room.save()
         super().delete(*args, **kwargs)
 
     def __str__(self):
