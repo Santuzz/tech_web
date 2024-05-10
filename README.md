@@ -1,6 +1,6 @@
 # tech_web
 
-Progetto realizzato per l'esame di tecnologie web del corso di ingegneria informatica presso l'Università degli studi di Modena e Reggio Emilia.
+Progetto realizzato per l'esame di tecnologie web del corso di ingegneria informatica presso l'Università degli studi di Modena e Reggio Emilia con l'obiettivo di prendere padronanza del web framework Django.
 
 Tale progetto è stato sviluppato con python 3.11, versioni precedenti potrebbero avere problemi di compatibilità.
 I comandi principali per far funzionare correttemente il sistema ed installare i moduli necessari dopo aver clonato il progetto sono:
